@@ -1,0 +1,45 @@
+@bgcolor: #00A3E5;
+
+body{
+  /* anyway set by topbar JS which suddenly changes UI layout. Better to set it right here */
+  padding-top: 45px
+}
+
+.top-bar{
+  background: @bgcolor;
+
+  ul > li.has-dropdown .dropdown,ul > li.has-dropdown .dropdown li,ul > li.has-dropdown .dropdown li:hover a,ul > li:hover, ul > li.active,ul > li.divider { background: @bgcolor}
+
+  ul > li.has-dropdown .dropdown li.divider { border-top: solid 1px @bgcolor;}
+}
+
+.fixed {
+  .top-bar{
+    margin: 0;
+  }
+}
+
+.chunked.hide {
+  display: none !important;
+}
+.no-js {
+    .chunked.hide {
+        display: block !important;
+    }
+}
+
+// page view container to display all links
+#pageView{
+  margin-top: 45px;
+}
+
+/* Mobile Styles */
+@media only screen and (max-width: 940px) {
+  .top-bar {
+    background: @bgcolor;
+
+    ul li.name { background: @bgcolor; }
+    ul li.toggle-topbar:hover { background: @bgcolor; }
+    ul li.divider { border-top: solid 1px @bgcolor;}
+  }
+}

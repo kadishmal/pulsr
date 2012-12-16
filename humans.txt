@@ -1,0 +1,17 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Esen Sagynov -- CUBRID Project Manager -- @CUBRID
+
+# THANKS
+
+
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3, Zurb Foundation, Twitter Bootstrap
+    RequireJS, Underscore, Backbone, Handlebars, jQuery
+    Node, Async, Mime, Marked, Less, Jsdom, node-cubrid, microcache
+    CUBRID RDBMS

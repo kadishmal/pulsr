@@ -3,13 +3,13 @@
 > Best decision of my career: Working on Open Source Software, the culture of sharing, encouraging and learning from each other is incredible.
 > -- <cite>Dale Harvey [@daleharvey](https://twitter.com/daleharvey/status/275252906293346306)</cite>
 
-**Pulsr** is a very _fast_ Web App Framework for Node.js developers to create **A-graded** Web apps. All LESS/CSS/JS files are properly concatenated, minimized, gzipped, cache-enabled and sent to a client. This is why Google's Page Speed grades Pulsr based sites with **95 out of 100** speed score, and YSlow with **91 out of 100** score. The good news is Pulsr doesn't include all the [Best Practices for Speeding Up Your Web Site](http://developer.yahoo.com/performance/rules.html) suggested by Yahoo! engineers. So, there is a room for further improvement.
+**Pulsr** is a very _fast_ Web App Framework designed to allow teams to create **A-graded** Web apps much faster through independent *pagelets* development. All LESS/CSS/JS files are properly concatenated, minimized, gzipped, cache-enabled and sent to a client. This is why Google's Page Speed grades Pulsr based sites with **95 out of 100** speed score, and YSlow with **91 out of 100** score. The good news is Pulsr doesn't include all the [Best Practices for Speeding Up Your Web Site](http://developer.yahoo.com/performance/rules.html) suggested by Yahoo! engineers. So, there is a room for further improvement.
 
-Pulsr sites are not only fast from Google/Yahoo point of view, but they also _look fast_ for site visitors because Pulsr sends the first response without waiting for all the heavy work necessary to render the page to be finished like database queries, image processing, etc. Visitors see the basic layout immediately while the rest _data_ of the page is pushed in by the server **in chunks** within the same initial HTTP request (_notice: **no** AJAX!_). This is the same technology used by Facebook on their main site. If you want to learn more about **chunked transfer encoding** read [Faster Web Page Loading with Facebook BigPipe](http://www.cubrid.org/blog/dev-platform/faster-web-page-loading-with-facebook-bigpipe/) I posted last year.
+Pulsr sites are not only fast from Google/Yahoo point of view, but they also _look fast_ (perceived to be fast) for site visitors because Pulsr sends the first response without waiting for all the heavy work necessary to render the page to be finished like database queries, image processing, etc. Visitors see the basic layout immediately while the rest _data_ of the page is pushed in by the server **in chunks** within the same initial HTTP request (_notice: **no** AJAX!_). This is the same technology used by Facebook on their main site, and many other high traffic Web sites like Mashable, TechCrunch, etc. If you want to learn more about **chunked transfer encoding** read [Faster Web Page Loading with Facebook BigPipe](http://www.cubrid.org/blog/dev-platform/faster-web-page-loading-with-facebook-bigpipe/) I posted last year.
 
 ## Pulsr is developer friendly
 
-Pulsr is not complete yet, nothing is ever finished. In fact, I have just started it. With introduction of **pagelets concept** (_discussed further_) **Pulsr is designed to make it very easy for developers, particularly for teams, to build and maintain their Web applications**.
+Pulsr is not complete yet, nothing is ever finished. In fact, I have just started it. With introduction of **pagelets concept** (_discussed further_) **Pulsr is designed to make it very easy and fast for developers, particularly for teams, to build and maintain their Web applications**.
 
 ### Client side
 
@@ -45,11 +45,11 @@ A page layout is more or less static as well. All it includes is a markup for up
 
 When using a common Web framework, after it receives a request for a particular page, it start building the page markup on the server side filling out with contents retrieved from a database, doing other important work like logging, user tracking, etc. All this takes time, but during this time the client browser is twiddling its thumbs - a whole waste of time and resources. But when the server has done building the page, it sends the response to the browser, and now the browser is super busy loading all the static resources and then rendering the page as shown in the following screenshot.
 
-![Figure 1: The response flow when a Web framework sends full page at once.](img/non_chunked_transfer.png)
+![Figure 1: The response flow when a Web framework sends full page at once.](http://farm9.staticflickr.com/8083/8279845790_b58a04c132_b.jpg)
 
 What Pulsr does (**Figure 2**) is it sends the initial page template (eg. _layout.hb_ + _front-page.hb_) to the client browser as soon as possible. While it keeps working on building the pagelets included for the requested page, by retrieving their data from a database or a remote server, the browser is already busy with loading page resources. At some point Pulsr sends the second chunk with, let's say, the layout and data of _pagelet 1_. The browser immediately starts loading the resources of this pagelet and starts rendering its layout. This continues until Pulsr finishes sending all pagelets' data.
 
-![Figure 2: Pulsr sending the page layout as soon as it can.](img/chunked_transfer_2.png)
+![Figure 2: Pulsr sending the page layout as soon as it can.](http://farm9.staticflickr.com/8061/8278788257_78edc750a2_b.jpg)
 
 Using chunked transfer encoding, Pulsr allows to dramatically increase the overall page load time which is highly favored by search engines. Moreover, this gives your site visitors the feeling of pages loading faster. This is Psychology, and it works!
 
@@ -345,6 +345,18 @@ Requirements for a *headless controller* are:
 1. Similarly, must inherit from a **BaseController** (*/pulsr/base.js*).
 2. But now it must override the main **handle()** function which for *view controller* used to output main layout, page layout, handle loading and displaying of pagelets, etc. For a headless controller these actions are not required, so **handle()** must be overriden. In the new release I will create wrap all these in a new Pulsr controller which inherits **BaseController**. Then you can simply inherit this **HeadlessController** with no need of overriding anything. So, it will come in the next release.
 
+## License
+
+Pulsr Web App Framework is distributed under the terms of the MIT license. For details refer to the LICENSE file in this repo.
+
 ## What's next
 
-This is the first public release
+This is the first public release. I will soon release a new version with significant improvements to Pulsr performance through:
+
+1. Implementation of Node.js Streams to stream static files to a client which will significantly decrese the memory consumption.
+2. Caching all layouts and files stats which will significantly decrease the number of I/O operations.
+3. Decreasing [Time to First Byte](http://en.wikipedia.org/wiki/Time_To_First_Byte) (TTFB) by flushing the main layout.hb even earlier than now: before the page layout.
+4. Gzip individual chunked responses from *view controllers*.
+5. And many more...
+
+There will be even more improvements to the Pulsr Framework itself which will provide more convenience for teams to develop Web Apps in Node.js.

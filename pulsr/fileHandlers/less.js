@@ -1,4 +1,8 @@
-// this sourceFileHandler converts a LESS file to a valid CSS file, optionally minifies it.
+/*
+ * less.js
+ * A LESS/CSS file handler that converts a LESS file to a valid CSS file,
+ * optionally minifies and gzips it.
+ */
 define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment'], function (path, conf, fs, less, error_handler, gzip, mkdirp, moment) {
     function saveToFile(file, data) {
         fs.writeFile(file, data, function(err) {
@@ -21,7 +25,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                 var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime),
                     targetDir = path.join(conf.dir.lessCompiled, fileName),
                     targetFileName = etag + '.css',
-                    targetFile = path.join(targetDir, targetFileName);
+                    targetFilePath = path.join(targetDir, targetFileName);
 
                 if (conf.file.handlerOptions[conf.file.extensions.less].cache) {
                     response.setHeader('Cache-Control', 'max-age=' + conf.app.cache.maxage);
@@ -39,23 +43,24 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                 }
                 else {
                     response.setHeader('Content-Type', 'text/css; charset=UTF-8');
-
-                    function returnData (data) {
-                        response.setHeader('ETag', etag);
-                        response.statusCode = 200;
-                        response.end(data);
-                    }
+                    response.setHeader('ETag', etag);
+                    response.statusCode = 200;
 
                     function processFile() {
-                        fs.readFile(targetFile, function (err, data) {
-                            if (err) {
+                        // try to read uncompressed but compiled file
+                        fs.exists(targetFilePath, function (exists) {
+                            if (exists) {
+                                // the stream will close the response automatically
+                                fs.createReadStream(targetFilePath).pipe(response);
+                            }
+                            else{
                                 // if compressed file also doesn't exist, then
                                 // read the source file.
                                 fs.readFile(sourceFile, 'utf8', function(err, data) {
                                     less.render(data, {compress: options.compress}, function (err, css) {
                                         if (err) {
                                             // simply send unprocessed LESS
-                                            returnData(data);
+                                            response.end(data);
                                         }
                                         else{
                                             data = css;
@@ -68,18 +73,19 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                                     // add .gz extension to gzipped files according to
                                                     // http://stackoverflow.com/a/9806694/556678
                                                     targetFileName += conf.file.extensions.gzip;
-                                                    targetFile += conf.file.extensions.gzip;
+                                                    targetFilePath += conf.file.extensions.gzip;
                                                 }
 
-                                                // first return the response to the browser.
+                                                // first return the response to a client.
                                                 // let it start doing its job.
                                                 // then take care of saving the compiled CSS
                                                 // to the file.
-                                                returnData(data);
+                                                response.end(data);
 
                                                 // make sure the target directory exists
                                                 fs.exists(targetDir, function (exists) {
                                                     if (exists) {
+                                                        // remove old compiled files
                                                         fs.readdir(targetDir, function (err, files) {
                                                             files.forEach(function(file) {
                                                                 if (file != targetFileName) {
@@ -92,7 +98,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                                             });
                                                         });
 
-                                                        saveToFile(targetFile, data);
+                                                        saveToFile(targetFilePath, data);
                                                     }
                                                     else {
                                                         mkdirp(targetDir, '0755', function(err) {
@@ -100,7 +106,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                                                 console.log('Could not create ' + targetDir + ' directory.');
                                                             }
                                                             else{
-                                                                saveToFile(targetFile, data);
+                                                                saveToFile(targetFilePath, data);
                                                             }
                                                         });
                                                     }
@@ -110,21 +116,21 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                     });
                                 });
                             }
-                            else{
-                                returnData(data);
-                            }
                         });
                     }
 
                     // first, check if user accepts gzipped data
                     if (request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') > -1) {
-                        fs.readFile(targetFile + conf.file.extensions.gzip, function (err, data) {
-                            if (err) {
-                                processFile();
+                        var compressedFile = targetFilePath + conf.file.extensions.gzip;
+
+                        fs.exists(compressedFile, function (exists) {
+                            if (exists) {
+                                response.setHeader('Content-Encoding', 'gzip');
+                                // the stream will close the response automatically
+                                fs.createReadStream(compressedFile).pipe(response);
                             }
                             else{
-                                response.setHeader('Content-Encoding', 'gzip');
-                                returnData(data);
+                                processFile();
                             }
                         });
                     }

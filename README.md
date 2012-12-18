@@ -43,7 +43,7 @@ Eg. _view/front-page.hb_
 
 A page layout is more or less static as well. All it includes is a markup for upcoming pagelets. It may also include other markup like the topbar, a header with a product or company logo, i.e. static page layout. Everything else which is dynamic that may slow down the response should be loaded through pagelets.
 
-**The idea here is** - send something, anything to the client **as soon as possible** so that the browser starts working by loading required static resources and rendering the initial page. This is very important. Here is why.
+**The idea here is** - send something, anything to a client **as soon as possible** so that the browser starts working by loading required static resources and rendering the initial page. This is very important. Here is why.
 
 When using a common Web framework, after it receives a request for a particular page, it start building the page markup on the server side filling out with contents retrieved from a database, doing other important work like logging, user tracking, etc. All this takes time, but during this time the client browser is twiddling its thumbs - a whole waste of time and resources. But when the server has done building the page, it sends the response to the browser, and now the browser is super busy loading all the static resources and then rendering the page as shown in the following screenshot.
 
@@ -355,10 +355,9 @@ Pulsr Web App Framework is distributed under the terms of the MIT license. For d
 
 This is the first public release. I will soon release a new version with significant improvements to Pulsr performance through:
 
-1. Implementation of Node.js Streams to stream static files to a client which will significantly decrese the memory consumption.
-2. Caching all layouts and files stats which will significantly decrease the number of I/O operations.
-3. Decreasing [Time to First Byte](http://en.wikipedia.org/wiki/Time_To_First_Byte) (TTFB) by flushing the main layout.hb even earlier than now: before the page layout.
-4. Gzip individual chunked responses from *view controllers*.
-5. And many more...
+1. Caching all layouts and files stats which will significantly decrease the number of I/O operations.
+2. Decreasing [Time to First Byte](http://en.wikipedia.org/wiki/Time_To_First_Byte) (TTFB) by flushing the main layout.hb even earlier than now: before the page layout.
+3. Gzip individual chunked responses from *view controllers*.
+4. And many more...
 
 There will be even more improvements to the Pulsr Framework itself which will provide more convenience for teams to develop Web Apps in Node.js.

@@ -1,6 +1,10 @@
-// this jsFileHandler performs minification of a JS file.
-// this module does not validate the request.url. The calling fileHandler
-// module should pass this module only .js file requests.
+/*
+ * js.js
+ * A JavaScript file Handler that minifies, uglifies and gzips JS files
+ * requested by a client.
+ * This module does not validate the request.url. The parent fileHandler.js
+ * module should pass this module only .js file requests.
+ */
 define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', 'moment'], function (path, conf, fs, uglify, error_handler, gzip, mkdirp, moment) {
     function saveToFile(file, data) {
         fs.writeFile(file, data, function(err) {
@@ -23,7 +27,7 @@ define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', '
                 var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime),
                     targetDir = path.join(conf.dir.jsCompiled, fileName),
                     targetFileName = etag + '.js',
-                    targetFile = path.join(targetDir, targetFileName);
+                    targetFilePath = path.join(targetDir, targetFileName);
 
                 if (conf.file.handlerOptions[conf.file.extensions.js].cache) {
                     response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
@@ -41,19 +45,19 @@ define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', '
                 }
                 else {
                     response.setHeader('Content-Type', 'application/javascript');
-
-                    function returnData (data) {
-                        response.setHeader('ETag', etag);
-                        response.statusCode = 200;
-                        response.end(data);
-                    }
+                    response.setHeader('ETag', etag);
+                    response.statusCode = 200;
 
                     function processFile() {
                         // try to read uncompressed but compiled file
-                        fs.readFile(targetFile, function (err, data) {
-                            if (err) {
+                        fs.exists(targetFilePath, function (exists) {
+                            if (exists) {
+                                // the stream will close the response automatically
+                                fs.createReadStream(targetFilePath).pipe(response);
+                            }
+                            else{
                                 // if compiled file also doesn't exist, then
-                                // read the source file.
+                                // read the source file and compile it.
                                 fs.readFile(sourceFile, function (err, data) {
                                     if (conf.file.handlerOptions[conf.file.extensions.js].minify) {
                                         // Compiled JS file hasn't been found, so read the source
@@ -68,18 +72,19 @@ define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', '
                                             // add .zz extension to gzipped files according to
                                             // http://stackoverflow.com/a/9806694/556678
                                             targetFileName += conf.file.extensions.gzip;
-                                            targetFile += conf.file.extensions.gzip;
+                                            targetFilePath += conf.file.extensions.gzip;
                                         }
 
-                                        // first return the response to the browser.
+                                        // first return the response to a client.
                                         // let it start doing its job.
                                         // then take care of saving the compiled JS
                                         // to the file.
-                                        returnData(data);
+                                        response.end(data);
 
                                         // make sure the target directory exists
                                         fs.exists(targetDir, function (exists) {
                                             if (exists) {
+                                                // remove old compiled files
                                                 fs.readdir(targetDir, function (err, files) {
                                                     files.forEach(function(file) {
                                                         if (file != targetFileName) {
@@ -92,7 +97,7 @@ define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', '
                                                     });
                                                 });
 
-                                                saveToFile(targetFile, data);
+                                                saveToFile(targetFilePath, data);
                                             }
                                             else {
                                                 mkdirp(targetDir, '0755', function(err) {
@@ -100,7 +105,7 @@ define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', '
                                                         console.log('Could not create ' + targetDir + ' directory.');
                                                     }
                                                     else{
-                                                        saveToFile(targetFile, data);
+                                                        saveToFile(targetFilePath, data);
                                                     }
                                                 });
                                             }
@@ -108,21 +113,21 @@ define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', '
                                     });
                                 });
                             }
-                            else{
-                                returnData(data);
-                            }
                         });
                     }
 
                     // first, check if user accepts gzipped data
                     if (request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') > -1) {
-                        fs.readFile(targetFile + conf.file.extensions.gzip, function (err, data) {
-                            if (err) {
-                                processFile();
+                        var compressedFile = targetFilePath + conf.file.extensions.gzip;
+
+                        fs.exists(compressedFile, function (exists) {
+                            if (exists) {
+                                response.setHeader('Content-Encoding', 'gzip');
+                                // the stream will close the response automatically
+                                fs.createReadStream(compressedFile).pipe(response);
                             }
                             else{
-                                response.setHeader('Content-Encoding', 'gzip');
-                                returnData(data);
+                                processFile();
                             }
                         });
                     }

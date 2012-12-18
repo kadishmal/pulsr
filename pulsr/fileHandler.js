@@ -37,16 +37,7 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs'], function(conf, requirejs, mi
                                 response.setHeader('ETag', etag);
                                 response.statusCode = 200;
 
-                                fs.readFile(filePath, function (err, data) {
-                                    if (err) {
-                                        requirejs(['error_handler'], function(error_handler){
-                                            error_handler.handle(request, response, err);
-                                        });
-                                    }
-                                    else{
-                                        response.end(data);
-                                    }
-                                });
+                                fs.createReadStream(filePath).pipe(response);
                             }
                         }
                     },

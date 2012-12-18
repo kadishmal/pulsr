@@ -28,8 +28,8 @@ define(['module', 'path'], function(module, path) {
             root: 'www.' + (isProduction ? productionDomain : devDomain + ':' + conf.port),
             static: 'static.' + (isProduction ? productionDomain : devDomain + ':' + conf.port)
         },
-        // Cache-Control in seconds
         cache: {
+            // Cache-Control in seconds
             maxage: (isProduction ?
                 // 1 week on production server for this time.
                 // ideally, it's recommended to cache for a year ahead
@@ -40,6 +40,13 @@ define(['module', 'path'], function(module, path) {
                 300),
             fileCache: {
                 stats: {
+                    // options passed directly to the internal lru cache
+                    // indicating how many items to store in a fileCache
+                    max: 100,
+                    // refresh the cache every 10 minutes
+                    maxAge: 1000 * 60 * 10
+                },
+                layouts: {
                     // options passed directly to the internal lru cache
                     // indicating how many items to store in a fileCache
                     max: 100,

@@ -1,4 +1,4 @@
-define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async'], function(fs, Handlebars, conf, requirejs, module, path, async) {
+define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fileCache'], function(fs, Handlebars, conf, requirejs, module, path, async, fileCache) {
     var views = conf.dir.views,
         templateExtension = conf.file.extensions.template,
         mainLayoutPath = path.join(views, conf.file.mainLayout + templateExtension);
@@ -9,8 +9,8 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async'], fun
         this.pagelets = [];
         this.handle = function (request, response) {
 			var controller = this;
-
-            fs.readFile(mainLayoutPath, 'utf8', function (err, data) {
+            // get the main site layout
+            fileCache.layouts.get(mainLayoutPath, function (err, data) {
                 if (err) {
                     requirejs(['error_handler'], function(error_handler){
                         error_handler.handle(request, response, err);
@@ -23,8 +23,8 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async'], fun
 
                     var layout = Handlebars.compile(data),
                         controllerLayout = path.join(views, controller.layout + templateExtension);
-
-                    fs.readFile(controllerLayout, 'utf8', function (err, data) {
+                    // get the page layout
+                    fileCache.layouts.get(controllerLayout, function (err, data) {
                         if (err) {
                             requirejs(['error_handler'], function(error_handler){
                                 error_handler.handle(request, response, err);

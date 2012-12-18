@@ -1,14 +1,14 @@
 // ga.js
 // Displays Google Analytics Code
-define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars'], function(Pagelet, _, fs, path, module, conf, Handlebars) {
+define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars', 'fileCache'], function(Pagelet, _, fs, path, module, conf, Handlebars, fileCache) {
     var pagelet = new Pagelet();
 
     return _.extend(pagelet, {
         moduleUri: module.uri,
         run: function (display) {
-            // TODO: No need to read template files all the time in pagelets.
-            // If not changed frequently, better to take it out of this function
-            fs.readFile(path.join(this.dir, this.dirName + conf.file.extensions.template), 'utf8', function (err, data) {
+            var pageletLayoutPath = path.join(this.dir, this.dirName + conf.file.extensions.template);
+            // get the pagelet layout
+            fileCache.layouts.get(pageletLayoutPath, function (err, data) {
                 if (err) {
                     console.log('Could not read ' + this.dir + ' pagelet.');
                 }

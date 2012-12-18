@@ -1,10 +1,24 @@
-var should = require("should");
+var should = require("should"),
+    requirejs = require('requirejs');
 
-describe('Array', function(){
-    describe('#indexOf()', function(){
-        it('should return -1 when the value is not present', function(){
-            should.equal(-1, [1,2,3].indexOf(5));
-            should.equal(-1, [1,2,3].indexOf(0));
-        })
-    })
-})
+requirejs.config({
+    baseUrl: 'pulsr',
+    nodeRequire: require
+});
+
+describe('Pulsr', function (){
+    describe('fileHandler', function (){
+        describe('js.js', function (){
+            it('should return 200 statusCode for js/mainClient.js request within 10s', function (done){
+                this.timeout(10000);
+
+                requirejs(['conf', 'http'], function (conf, http) {
+                    http.get('http://' + conf.app.domains.static + '/js/mainClient.js', function (response) {
+                        response.should.have.status(200);
+                        done();
+                    });
+                });
+            });
+        });
+    });
+});

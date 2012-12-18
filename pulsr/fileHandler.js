@@ -1,4 +1,4 @@
-define(['conf', 'requirejs', 'mime', 'path', 'fs'], function(conf, requirejs, mime, path, fs) {
+define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache'], function(conf, requirejs, mime, path, fs, fileCache) {
     mime.define({
         'text/css': ['less'],
         'text/html': ['hb'],
@@ -50,7 +50,7 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs'], function(conf, requirejs, mi
                         });
                     }
                     else{
-                        fs.stat(filePath, fileHandlerStatCallback);
+                        fileCache.stats.get(filePath, fileHandlerStatCallback);
                     }
                 });
 			}

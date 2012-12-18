@@ -1,7 +1,7 @@
 {
   "name": "pulsr",
   "description": "Pulsr based Node.js app",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "keywords": ["pulsr", "framework", "web", "pagelet", "rest", "restful", "app", "api"],
   "author": "Esen Sagynov <kadishmal@gmail.com>",
   "subdomain": "pulsr.local",
@@ -30,7 +30,8 @@
     "uglify-js2": "2.1.6",
     "mkdirp": "0.3.4",
     "moment": "1.7.2",
-    "microcache": "1.0.0"
+    "microcache": "1.0.0",
+    "async-cache": "0.1.0"
   },
   "devDependencies": {
     "docco": "0.4.0",

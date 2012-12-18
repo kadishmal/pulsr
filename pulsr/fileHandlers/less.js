@@ -3,7 +3,7 @@
  * A LESS/CSS file handler that converts a LESS file to a valid CSS file,
  * optionally minifies and gzips it.
  */
-define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment'], function (path, conf, fs, less, error_handler, gzip, mkdirp, moment) {
+define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, less, error_handler, gzip, mkdirp, moment, fileCache) {
     function saveToFile(file, data) {
         fs.writeFile(file, data, function(err) {
             if (err) {
@@ -16,7 +16,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
         var fileName = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.lastIndexOf('.')),
             sourceFile = path.join(conf.dir.less, request.url.substring(request.url.lastIndexOf('/') + 1));
 
-        fs.stat(sourceFile, function (err, stat) {
+        fileCache.stats.get(sourceFile, function (err, stat) {
             if (err) {
                 console.log(sourceFile + ' could not be found.');
                 error_handler.handle(request, response, err);

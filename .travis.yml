@@ -1,6 +1,11 @@
 language: node_js
+
 node_js:
   - "0.8"
+
 before_script:
   - "sudo sed -i '$a 127.0.0.1    pulsr.local static.pulsr.local' /etc/hosts"
-  - "node app.js"
+
+# configure notifications (IRC)
+notifications:
+  irc: "irc.freenode.org#pulsr"

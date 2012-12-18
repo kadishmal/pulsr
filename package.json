@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "app.js",
-    "test": "make test"
+    "test": "node app.js && make test"
   },
   "dependencies": {
     "requirejs": "2.1.1",

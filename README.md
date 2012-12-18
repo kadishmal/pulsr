@@ -1,5 +1,7 @@
 # Pulsr Node.js Web App Framework
 
+[![Build Status](https://travis-ci.org/kadishmal/pulsr.png?branch=master)](https://travis-ci.org/kadishmal/pulsr)
+
 > Best decision of my career: Working on Open Source Software, the culture of sharing, encouraging and learning from each other is incredible.
 > -- <cite>Dale Harvey [@daleharvey](https://twitter.com/daleharvey/status/275252906293346306)</cite>
 

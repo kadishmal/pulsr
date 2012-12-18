@@ -1,7 +1,7 @@
 define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async'], function(fs, Handlebars, conf, requirejs, module, path, async) {
     var views = conf.dir.views,
         templateExtension = conf.file.extensions.template,
-        mainLayout = path.join(views, conf.file.mainLayout + templateExtension);
+        mainLayoutPath = path.join(views, conf.file.mainLayout + templateExtension);
 
     return function () {
         this.title = '';
@@ -10,7 +10,7 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async'], fun
         this.handle = function (request, response) {
 			var controller = this;
 
-            fs.readFile(mainLayout, 'utf8', function (err, data) {
+            fs.readFile(mainLayoutPath, 'utf8', function (err, data) {
                 if (err) {
                     requirejs(['error_handler'], function(error_handler){
                         error_handler.handle(request, response, err);

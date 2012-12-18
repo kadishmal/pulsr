@@ -5,6 +5,8 @@ node_js:
 
 before_script:
   - "sudo sed -i '$a 127.0.0.1    pulsr.local static.pulsr.local' /etc/hosts"
+  - "node app.js &"
+  - "sleep 3"
 
 # configure notifications (IRC)
 notifications:

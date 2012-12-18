@@ -25,7 +25,7 @@ define(['module', 'path'], function(module, path) {
     conf.app = {
         engine: 'pulsr',
         domains: {
-            root: 'www.' + (isProduction ? productionDomain : devDomain),
+            root: 'www.' + (isProduction ? productionDomain : devDomain + ':' + conf.port),
             static: 'static.' + (isProduction ? productionDomain : devDomain + ':' + conf.port)
         },
         // Cache-Control in seconds

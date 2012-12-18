@@ -37,7 +37,16 @@ define(['module', 'path'], function(module, path) {
                 // 1 week is acceptable by Google Page Speed as well as YSlow
                 60 * 60 * 24 * 7 :
                 // or 5 minutes on dev server
-                300)
+                300),
+            fileCache: {
+                stats: {
+                    // options passed directly to the internal lru cache
+                    // indicating how many items to store in a fileCache
+                    max: 100,
+                    // refresh the cache every 10 minutes
+                    maxAge: 1000 * 60 * 10
+                }
+            }
         },
         // a preparation for multi-site support: not yet implemented
         sites: {

@@ -1,4 +1,4 @@
-define(['underscore', 'base', 'module'], function(_, BaseController, module) {
+define(['underscore', 'baseController', 'module'], function(_, BaseController, module) {
     var controller = new BaseController();
 
     return _.extend(controller, {

@@ -19,8 +19,8 @@ define(['url_patterns', 'requirejs', 'conf', 'path', 'session', 'error_handler',
 
         function errback(err) {
             // this function is called when no user defined controller
-            // is found. It such case it falls back and searches among
-            // pulsr's controller.
+            // is found. In such case it falls back and searches among
+            // Pulsr's controller.
             // No Pulsr controller is called here except for fileHandler
             // which ignores cookies and should not set any session data.
             requirejs([pulsrController], function (controller) {
@@ -39,6 +39,7 @@ define(['url_patterns', 'requirejs', 'conf', 'path', 'session', 'error_handler',
             request.body += chunk;
 
             // FLOOD ATTACK OR FAULTY CLIENT, NUKE REQUEST
+            // Also checking the domain would be good
             if (request.body.length > 1e6) {
                 request.connection.destroy();
                 // TODO: we may temporarily add to a blacklist

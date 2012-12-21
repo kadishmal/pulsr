@@ -2,6 +2,8 @@ define(function() {
 	return {
 		// sorted by priority: the first one matched will process the request
 		'/': 'front_page',
+        // /api/actionName
+        '/api(/([\\w-]+(/(.+)*)*)*)*': 'api',
         // blog and all kinds of content requests can be handled by the same
         // "blog" controller
         '/blog(/([\\w-]+)*)*': 'post',

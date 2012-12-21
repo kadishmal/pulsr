@@ -1,7 +1,5 @@
-define(['underscore', 'baseController', 'module'], function(_, BaseController, module) {
-    var controller = new BaseController();
-
-	return _.extend(controller, {
+define(['baseController', 'module'], function(BaseController, module) {
+    return BaseController.override({
 		title: 'Page not found',
         moduleId: module.id,
         layout: 'front-page',

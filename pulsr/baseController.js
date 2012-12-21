@@ -1,13 +1,16 @@
-define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fileCache'], function(fs, Handlebars, conf, requirejs, module, path, async, fileCache) {
+define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fileCache', 'underscore'], function(fs, Handlebars, conf, requirejs, module, path, async, fileCache, _) {
     var views = conf.dir.views,
         templateExtension = conf.file.extensions.template,
         mainLayoutPath = path.join(views, conf.file.mainLayout + templateExtension);
 
-    return function () {
-        this.title = '';
-        this.moduleId = module.id;
-        this.pagelets = [];
-        this.handle = function (request, response) {
+    return {
+        title: '',
+        moduleId: module.id,
+        pagelets: [],
+        override: function (props) {
+            return _.extend({}, this, props);
+        },
+        handle: function (request, response) {
 			var controller = this;
             // get the main site layout
             fileCache.layouts.get(mainLayoutPath, function (err, data) {
@@ -116,6 +119,6 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fil
                     });
                 }
             });
-		};
+		}
 	};
 });

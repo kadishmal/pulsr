@@ -7,7 +7,7 @@ requirejs.config({
 });
 
 describe('Pulsr', function (){
-    describe('base', function (){
+    describe('baseController', function (){
         it('should return 200 statusCode for root page request within 15s', function (done){
             // set timeout to 15s
             this.timeout(15000);

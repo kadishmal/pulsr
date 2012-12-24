@@ -77,6 +77,7 @@ define(['module', 'path'], function(module, path) {
             // images
             'image/gif',
             'image/png',
+            'image/jpeg',
             // html files
             'text/html',
             // plain text files

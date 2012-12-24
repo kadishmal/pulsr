@@ -5,7 +5,7 @@
  * This module does not validate the request.url. The parent fileHandler.js
  * module should pass this module only .js file requests.
  */
-define(['path', 'conf', 'fs', 'uglify-js2', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, uglify, error_handler, gzip, mkdirp, moment, fileCache) {
+define(['path', 'conf', 'fs', 'uglify-js', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, uglify, error_handler, gzip, mkdirp, moment, fileCache) {
     function saveToFile(file, data) {
         fs.writeFile(file, data, function(err) {
             if (err) {

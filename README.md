@@ -245,17 +245,15 @@ If no specific file handler is found based on the mime type of the requested fil
 You can create two types of controllers:
 
 1. **View controller** which renders some view to display to a client.
-2. **Headless controller** which handles RESTful requests.
+2. **REST controller** which handles headless, RESTful requests.
 
 ####### View controller
 
 The following is a sample user controller from *controllers/front_page.js* which handles requests for a front page of a Web site for '**/**' URI.
 
 ```
-define(['underscore', 'base', 'module'], function(_, BaseController, module) {
-	var controller = new BaseController();
-
-	return _.extend(controller, {
+define(['baseController', 'module'], function(BaseController, module) {
+	return BaseController.override({
 		title: 'My Node.js app based on Pulsr',
 		moduleId: module.id,
 		layout: 'front-page',
@@ -273,7 +271,7 @@ The **front-page** *page layout* that is indicated in the above *view controller
 
 Requirements for a *view controller* are:
 
-1. Must inherit from a **BaseController** (*/pulsr/base.js*).
+1. Must override properties of a **BaseController** (*/pulsr/baseController.js*).
 2. Parent properties must be extended for the following properties:
 	1. `title`: title of the page
 	2. `moduleId`: an ID of the current controller auto set by RequireJS.
@@ -288,64 +286,60 @@ A headles controller may look like the following from */controllers/api.js*.
 
 ```
 /*
-    api.js
-    A headless controller module to perform client site API actions.
+    # api.js
+
+    An exemplary headless controller module to handle client site API actions.
+
+    **Requesting**
+
+    - ** /api**: will run the **default** action as no action is specified.
+    - ** /api/someGetAction**: will run **someGetAction**.
  */
-define(['underscore', 'base', 'module', 'cubrid', 'conf'], function(_, BaseController, module, CUBRID, conf) {
-    var controller = new BaseController();
-
-    return _.extend(controller, {
+define(['restController', 'module', 'conf'], function(RestController, module, conf) {
+    return RestController.override({
         moduleId: module.id,
-        handle: function (request, response) {
-            var method = request.method.toLowerCase();
-
-            if (!this.hasOwnProperty(method + '-actions')) {
-                // Method Not Allowed
-                response.statusCode = 405;
-                response.end();
-            }
-            else{
-                var action = request.params[1];
-
-                if (!this[method + '-actions'].hasOwnProperty(action)) {
-                    // Method Not Allowed
-                    response.statusCode = 405;
-                    response.end();
-                }
-                else{
-                    this[method + '-actions'][action](request, response);
-                }
-            }
-        },
         'get-actions': {
-            // this API is called from client
+            // a default action if no action is specified
+            default: function (request, response) {
+                // as a sample response return this API and action info
+                response.end(JSON.stringify({
+                    controller: 'api',
+                    method: 'GET',
+                    action: 'default',
+                    status: 'success'
+                }));
+            },
+            // some other API called from a client
             someGetAction: function (request, response) {
-                // first make sure this request is generated from our own site
+                // for example, first make sure this request is generated from our own site.
                 if (request.headers && request.headers['host'] && request.headers['host'].indexOf(conf.app.domains.root) == 0) {
-                    // handle the request
+                    // as a sample response return this API and action info
+                    response.end(JSON.stringify({
+                        controller: 'api',
+                        method: 'GET',
+                        action: 'someGetAction',
+                        status: 'success'
+                    }));
                 }
                 else{
-                    // prohibited
+                    // otherwise, it's prohibited
                     response.statusCode = 403;
                     response.end();
                 }
             }
-        },
-        'post-actions': {
-
-        },
-        'put-actions': {
-
+            // other GET actions can be added here
         }
-        // other actions
+        // other HTTP actions can be added here
     });
 });
 ```
 
-Requirements for a *headless controller* are:
+Requirements for a *RESTful controller* are:
 
-1. Similarly, must inherit from a **BaseController** (*/pulsr/base.js*).
-2. But now it must override the main **handle()** function which for *view controller* used to output main layout, page layout, handle loading and displaying of pagelets, etc. For a headless controller these actions are not required, so **handle()** must be overriden. In the new release I will create wrap all these in a new Pulsr controller which inherits **BaseController**. Then you can simply inherit this **HeadlessController** with no need of overriding anything. So, it will come in the next release.
+1. Must override properties  (at least `moduleId`) of a **RestController** (*/pulsr/restController.js*).
+2. Optionally can provide `GET`, `POST`, `DELETE`, etc. properties like `get-actions` shown above.
+    - When a `GET` request for */api/someGetAction* is arrived, the **RestController** will check if `get-actions` property exists. If it exists, it checks whether or not `someGetAction` is defined in `get-actions`. If it does, it calls the function assigned to that action to handle the request.
+    - In case no action is requested, eg. */api* with no action specified, the **default** action will be executed.
 
 ## License
 

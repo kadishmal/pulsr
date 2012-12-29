@@ -68,7 +68,7 @@ describe('Pulsr', function (){
 
                 requirejs(['async', 'fs', 'path', 'module', 'http', 'conf'], function (async, fs, path, module, http, conf) {
                     // a list of non-existing JS files
-                    var jsFiles = ['js/apple.js', 'js/banana.js', 'js/libs/bootstrap/jake.js', 'zoo.js'];
+                    var jsFiles = ['js/apple.js', 'js/banana.js', 'js/libs/bootstrap/jake.js'];
 
                     function requestFile(fileName, done) {
                         var filePath = path.join(path.dirname(path.resolve(module.uri)), '../', fileName);

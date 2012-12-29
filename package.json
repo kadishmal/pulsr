@@ -1,7 +1,7 @@
 {
   "name": "pulsr",
   "description": "Pulsr based Node.js app",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": ["pulsr", "framework", "web", "pagelet", "rest", "restful", "app", "api"],
   "author": "Esen Sagynov <kadishmal@gmail.com>",
   "subdomain": "pulsr.local",

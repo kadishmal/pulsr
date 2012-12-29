@@ -81,7 +81,7 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fil
                             if (controller.css) {
                                 controller.css.forEach(function (file) {
                                     cssStyles += '<link rel="stylesheet" href="//' +
-                                        conf.app.domains.static + '/css/' + file + '">';
+                                        conf.app.domains.static + '/less/' + file + '">';
                                 });
                             }
 

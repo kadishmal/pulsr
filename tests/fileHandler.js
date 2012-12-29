@@ -80,12 +80,32 @@ describe('Pulsr', function (){
             });
         });
 
-        it('should return 403 statusCode for directories requests within 20s', function (done){
+        it('should return 403 statusCode for direct directory access requests within 20s', function (done){
             // set timeout to 20s
             this.timeout(20000);
 
             requirejs(['async', 'http', 'conf'], function (async, http, conf) {
                 var restrictedDirs = ['img', 'js', 'less', 'pulsr', 'controller', 'nonExistingDir', 'js/bootstrap', 'less/foundation'];
+
+                function requestDir(dirName, done) {
+                    http.get('http://' + conf.app.domains.static + '/' + dirName, function (response) {
+                        response.should.have.status(403);
+                        done();
+                    });
+                }
+
+                async.forEach(restrictedDirs, requestDir, function (err) {
+                    done();
+                });
+            });
+        });
+
+        it('should return 403 statusCode for restricted directory access requests within 20s', function (done){
+            // set timeout to 20s
+            this.timeout(20000);
+
+            requirejs(['async', 'http', 'conf'], function (async, http, conf) {
+                var restrictedDirs = ['pulsr/conf.js', 'pagelets/ga/ga.js', 'contents/404.md', 'controllers/api.js', 'node_modules/bin/docco', 'nonExistingDir', 'tests/baseController.js', 'views/layout.hb', '../aboveRootNonExistDir'];
 
                 function requestDir(dirName, done) {
                     http.get('http://' + conf.app.domains.static + '/' + dirName, function (response) {

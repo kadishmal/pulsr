@@ -66,7 +66,8 @@ define(['module', 'path'], function(module, path) {
     };
 
     conf.file = {
-        // which kind of static files can be requested by a client
+        // Which kind of static files can be requested by a client?
+        // Used by fileHandler.js.
         allowedMimes: [
             // CSS files
             'text/css',
@@ -82,6 +83,14 @@ define(['module', 'path'], function(module, path) {
             'text/html',
             // plain text files
             'text/plain'
+        ],
+        // Which directories can be looked up by users?
+        // Used by fileHandler.js.
+        allowedDirs: [
+            'docs',
+            'img',
+            'js',
+            'less'
         ],
         // the name of the main layout template file
         mainLayout: 'layout',

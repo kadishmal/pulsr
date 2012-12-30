@@ -1,9 +1,6 @@
-/*
- * less.js
- * A LESS/CSS file handler that converts a LESS file to a valid CSS file,
- * optionally minifies and gzips it.
- */
-define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, less, error_handler, gzip, mkdirp, moment, fileCache) {
+// A LESS/CSS file handler that converts LESS files to valid CSS files.
+// Optionally it can minify and gzip files.
+define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache', 'ua-parser'], function (path, conf, fs, less, error_handler, gzip, mkdirp, moment, fileCache, uaParser) {
     function saveToFile(file, data) {
         fs.writeFile(file, data, function(err) {
             if (err) {
@@ -14,7 +11,21 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
 
     return function (request, response, options) {
         var fileName = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.lastIndexOf('.')),
-            sourceFile = path.join(conf.dir.less, request.url.substring(request.url.lastIndexOf('/') + 1));
+            sourceFile;
+
+        // iPad 1 & 2 as well as iPad mini have screen resolution = 768 x 1024.
+        // iPad 3 & 4 have screen resolution = 1536 x 2048.
+        // This means there is no need to serve mobile device only (max-width: 767px)
+        // Media Queries to these devices when mqueries.less is requested.
+        // In such case serve only MQ with (min-width: 768px).
+        // If you have other devices to include, create a new issue at
+        // https://github.com/kadishmal/pulsr/issues/new.
+        if (fileName == 'mqueries' && uaParser.parseDevice(request.headers['user-agent']).family == 'iPad') {
+            fileName += '-min-width-768';
+            console.log('Serving non-mobile mqueries.');
+        }
+
+        sourceFile = path.join(conf.dir.less, fileName + '.less');
 
         fileCache.stats.get(sourceFile, function (err, stat) {
             if (err) {

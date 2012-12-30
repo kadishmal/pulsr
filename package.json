@@ -1,7 +1,7 @@
 {
   "name": "pulsr",
   "description": "Pulsr based Node.js app",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "keywords": ["pulsr", "framework", "web", "pagelet", "rest", "restful", "app", "api"],
   "author": "Esen Sagynov <kadishmal@gmail.com>",
   "subdomain": "pulsr.local",
@@ -30,6 +30,7 @@
 	  "mkdirp": "0.3.4",
 	  "moment": "1.7.2",
 	  "requirejs": "2.1.2",
+	  "ua-parser": "0.3.0",
 	  "underscore": "1.4.2",
 	  "uglify-js": "2.2.2"
   },

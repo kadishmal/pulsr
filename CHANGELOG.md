@@ -1,5 +1,13 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.3 December 29, 2012
+
+- New: split mqueries.less into two files: MQ min-width:768px and max-width: 767px.
+- Enh: when requesting mqueries on iPad serve only min-width:768px MQ. No need to serve mobile-only MQ on iPad.
+- Ref: removed headers.js module. No need.
+- Test: fixed jsFileHandler test.
+- Test: added a new test to fileHandler.
+
 ## Version 0.1.2 December 23, 2012
 
 - New: allow access to static files located only in permitted directories.

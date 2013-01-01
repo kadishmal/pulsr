@@ -16,7 +16,8 @@ define(['path', 'conf', 'fs', 'uglify-js', 'error_handler', 'gzip', 'mkdirp', 'm
 
     return function (request, response, options) {
         var fileName = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.lastIndexOf('.')),
-            sourceFile = request.url.substring(1); // remove the front / slash for relative path
+            // remove the front / slash for relative path
+            sourceFile = request.url.substring(1);
 
         fileCache.stats.get(sourceFile, function (err, stat) {
             if (err) {

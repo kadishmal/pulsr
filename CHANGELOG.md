@@ -1,5 +1,13 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.4 December 31, 2012
+
+- New: Gzip and Cache-enable static HTML files.
+- Ref: updated comments in *pulsr/gzip.js*.
+- Doc: updated docs.
+- Com: updated the comment.
+- Git: don't track the "assets" directory.
+
 ## Version 0.1.3 December 29, 2012
 
 - New: split mqueries.less into two files: MQ min-width:768px and max-width: 767px.

@@ -2,4 +2,5 @@
 .DS_Store
 js/compiled
 less/compiled
+assets
 node_modules

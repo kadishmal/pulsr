@@ -17,7 +17,8 @@ define(['module', 'path'], function(module, path) {
         css: path.join(conf.absPath, 'css'),
         lessCompiled: path.join(conf.absPath, 'less', 'compiled'),
         js: 'js',
-        jsCompiled: path.join(conf.absPath, 'js', 'compiled')
+        jsCompiled: path.join(conf.absPath, 'js', 'compiled'),
+        htmlCompiled: path.join(conf.absPath, 'assets', 'html')
     };
 
     conf.port = process.env.VMC_APP_PORT || 1337;
@@ -103,7 +104,8 @@ define(['module', 'path'], function(module, path) {
             less: '.less',
             css: '.css',
             js: '.js',
-            gzip: '.gz'
+            gzip: '.gz',
+            html: '.html'
         },
         // file handler options
         handlerOptions: {}
@@ -118,6 +120,11 @@ define(['module', 'path'], function(module, path) {
     // we also want a file handler for JS files
     conf.file.handlerOptions[conf.file.extensions.js] = {
         minify: true,
+        gzip: true,
+        cache: true
+    };
+    // We also want a file handler for HTML files
+    conf.file.handlerOptions[conf.file.extensions.html] = {
         gzip: true,
         cache: true
     };

@@ -1,6 +1,7 @@
-define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler'], function(conf, requirejs, mime, path, fs, fileCache, error_handler) {
+define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler', 'underscore'], function(conf, requirejs, mime, path, fs, fileCache, error_handler, _) {
     // A RegEx to chech whether the requested file is located in one of the allowed directories.
-    var allowedDirsRE = new RegExp("^/(" + conf.file.allowedDirs.join("|") + ")/.*");
+    var allowedDirsRE = new RegExp("^/(" + conf.file.allowedDirs.join("|") + ")/.*"),
+        allowedMimesRE = new RegExp("^(" + _.toArray(conf.file.allowedMimes).join("|") + ")");
 
     mime.define({
         'text/css': ['less'],
@@ -16,7 +17,7 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler']
             if (allowedDirsRE.test(request.url)) {
                 var contentType = mime.lookup(request.url);
                 // Is this type of file allowed to be served?
-                if (conf.file.allowedMimes.indexOf(contentType) > -1) {
+                if (allowedMimesRE.test(contentType)) {
                     // 1. Make sure user doesn't try to access restricted areas
                     // using "../" relative path.
                     // 2. Prepend ".", indicating that the file lookup should be

@@ -69,22 +69,22 @@ define(['module', 'path'], function(module, path) {
     conf.file = {
         // Which kind of static files can be requested by a client?
         // Used by fileHandler.js.
-        allowedMimes: [
+        allowedMimes: {
             // CSS files
-            'text/css',
+            css: 'text/css',
             // JavaScript files
-            'application/javascript',
+            js: 'application/javascript',
             // icons
-            'image/x-icon',
+            icon: 'image/x-icon',
             // images
-            'image/gif',
-            'image/png',
-            'image/jpeg',
+            gif: 'image/gif',
+            png: 'image/png',
+            jpeg: 'image/jpeg',
             // html files
-            'text/html',
+            html: 'text/html',
             // plain text files
-            'text/plain'
-        ],
+            plain: 'text/plain'
+        },
         // Which directories can be looked up by users?
         // Used by fileHandler.js.
         allowedDirs: [

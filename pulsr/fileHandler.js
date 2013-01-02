@@ -1,7 +1,9 @@
 define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler', 'underscore'], function(conf, requirejs, mime, path, fs, fileCache, error_handler, _) {
     // A RegEx to chech whether the requested file is located in one of the allowed directories.
     var allowedDirsRE = new RegExp("^/(" + conf.file.allowedDirs.join("|") + ")/.*"),
-        allowedMimesRE = new RegExp("^(" + _.toArray(conf.file.allowedMimes).join("|") + ")");
+    // `conf.file.allowedMimes` is an object. We need an array of its keys' values.
+    // Underscore has a convenient [toArray()](http://underscorejs.org/#toArray) function for this.
+        allowedMimes = _.toArray(conf.file.allowedMimes);
 
     mime.define({
         'text/css': ['less'],
@@ -17,7 +19,10 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler',
             if (allowedDirsRE.test(request.url)) {
                 var contentType = mime.lookup(request.url);
                 // Is this type of file allowed to be served?
-                if (allowedMimesRE.test(contentType)) {
+                // `Array.indexOf()` seems to be faster than its RegExp equivalent on Chrome 23,
+                // which runs on V8 same as Node.js.
+                // See http://jsperf.com/regexp-test-vs-array-indexof-performance.
+                if (allowedMimes.indexOf(contentType) > -1) {
                     // 1. Make sure user doesn't try to access restricted areas
                     // using "../" relative path.
                     // 2. Prepend ".", indicating that the file lookup should be

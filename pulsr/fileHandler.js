@@ -1,6 +1,6 @@
 define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler', 'underscore'], function(conf, requirejs, mime, path, fs, fileCache, error_handler, _) {
     // A RegEx to chech whether the requested file is located in one of the allowed directories.
-    var allowedDirsRE = new RegExp("^/(" + conf.file.allowedDirs.join("|") + ")/.*"),
+    var allowedDirsRE = new RegExp("^/\\b(" + conf.file.allowedDirs.join("|") + ")\\b/.*"),
     // `conf.file.allowedMimes` is an object. We need an array of its keys' values.
     // Underscore has a convenient [toArray()](http://underscorejs.org/#toArray) function for this.
         allowedMimes = _.toArray(conf.file.allowedMimes);

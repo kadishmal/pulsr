@@ -11,7 +11,8 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
 
     return function (request, response, options) {
         var fileName = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.lastIndexOf('.')),
-            sourceFile;
+            sourceFile = path.dirname(request.url).substring(1),
+            fileExtension = path.extname(request.url);
 
         // iPad 1 & 2 as well as iPad mini have screen resolution = 768 x 1024.
         // iPad 3 & 4 have screen resolution = 1536 x 2048.
@@ -22,10 +23,10 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
         // https://github.com/kadishmal/pulsr/issues/new.
         if (fileName == 'mqueries' && uaParser.parseDevice(request.headers['user-agent']).family == 'iPad') {
             fileName += '-min-width-768';
-            console.log('Serving non-mobile mqueries.');
+            console.log('Serving non-mobile mqueries only.');
         }
 
-        sourceFile = path.join(conf.dir.less, fileName + '.less');
+        sourceFile = path.join(sourceFile, fileName + fileExtension);
 
         fileCache.stats.get(sourceFile, function (err, stat) {
             if (err) {
@@ -34,7 +35,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
             }
             else{
                 var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime),
-                    targetDir = path.join(conf.dir.lessCompiled, fileName),
+                    targetDir = path.join(conf.dir.cssCompiled, fileName),
                     targetFileName = etag + '.css',
                     targetFilePath = path.join(targetDir, targetFileName);
 
@@ -58,28 +59,25 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                     response.statusCode = 200;
 
                     function processFile() {
-                        // try to read uncompressed but compiled file
+                        // Try to read not gzipped but compiled file.
                         fs.exists(targetFilePath, function (exists) {
                             if (exists) {
-                                // the stream will close the response automatically
+                                // The stream will close the response automatically.
                                 fs.createReadStream(targetFilePath).pipe(response);
                             }
                             else{
-                                // if compressed file also doesn't exist, then
-                                // read the source file.
+                                // If compiled file also doesn't exist, then read the source file.
                                 fs.readFile(sourceFile, 'utf8', function(err, data) {
                                     less.render(data, {compress: options.compress}, function (err, css) {
                                         if (err) {
-                                            // simply send unprocessed LESS
+                                            // Simply send unprocessed LESS.
                                             response.end(data);
                                         }
                                         else{
-                                            data = css;
-
-                                            gzip.compressLESS(request, data, function (compressedData) {
+                                            gzip.compressLESS(request, css, function (compressedData) {
 
                                                 if (compressedData !== undefined) {
-                                                    data = compressedData;
+                                                    css = compressedData;
                                                     response.setHeader('Content-Encoding', 'gzip');
                                                     // add .gz extension to gzipped files according to
                                                     // http://stackoverflow.com/a/9806694/556678
@@ -91,7 +89,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                                 // let it start doing its job.
                                                 // then take care of saving the compiled CSS
                                                 // to the file.
-                                                response.end(data);
+                                                response.end(css);
 
                                                 // make sure the target directory exists
                                                 fs.exists(targetDir, function (exists) {
@@ -109,7 +107,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                                             });
                                                         });
 
-                                                        saveToFile(targetFilePath, data);
+                                                        saveToFile(targetFilePath, css);
                                                     }
                                                     else {
                                                         mkdirp(targetDir, '0755', function(err) {
@@ -117,7 +115,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                                                                 console.log('Could not create ' + targetDir + ' directory.');
                                                             }
                                                             else{
-                                                                saveToFile(targetFilePath, data);
+                                                                saveToFile(targetFilePath, css);
                                                             }
                                                         });
                                                     }
@@ -130,14 +128,14 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                         });
                     }
 
-                    // first, check if user accepts gzipped data
+                    // First, check if user accepts gzipped data.
                     if (request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') > -1) {
                         var compressedFile = targetFilePath + conf.file.extensions.gzip;
 
                         fs.exists(compressedFile, function (exists) {
                             if (exists) {
                                 response.setHeader('Content-Encoding', 'gzip');
-                                // the stream will close the response automatically
+                                // The stream will close the response automatically.
                                 fs.createReadStream(compressedFile).pipe(response);
                             }
                             else{
@@ -147,7 +145,6 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                     }
                     else{
                         console.log('Gzip seems to be disabled for this user request:');
-                        console.log(request);
                         processFile();
                     }
                 }

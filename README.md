@@ -349,9 +349,8 @@ Pulsr Web App Framework is distributed under the terms of the MIT license. For d
 
 This is the first public release. I will soon release a new version with significant improvements to Pulsr performance through:
 
-1. Caching all layouts and files stats which will significantly decrease the number of I/O operations.
-2. Decreasing [Time to First Byte](http://en.wikipedia.org/wiki/Time_To_First_Byte) (TTFB) by flushing the main layout.hb even earlier than now: before the page layout.
-3. Gzip individual chunked responses from *view controllers*.
-4. And many more...
+1. Decreasing [Time to First Byte](http://en.wikipedia.org/wiki/Time_To_First_Byte) (TTFB) by flushing the main layout.hb even earlier than now: before the page layout.
+2. Gzip individual chunked responses from *view controllers*.
+3. And many more...
 
 There will be even more improvements to the Pulsr Framework itself which will provide more convenience for teams to develop Web Apps in Node.js.

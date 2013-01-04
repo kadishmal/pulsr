@@ -1,5 +1,13 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.5 January 2, 2013
+
+- Enh: define allowed mime types as an object instead of an array.
+- Enh: Array.indexOf seems to be faster than its RegExp equivalent.
+- Enh: allowedDirsRE RegEx should test for full words not substrings.
+- Enh: now multiple mime types can be handled by one file handler. Formerly a file handler could handle only a specific file extension.
+- Ref: refactored the code.
+
 ## Version 0.1.4 December 31, 2012
 
 - New: Gzip and Cache-enable static HTML files.

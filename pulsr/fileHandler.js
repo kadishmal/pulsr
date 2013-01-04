@@ -27,46 +27,43 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler',
                     // using "../" relative path.
                     // 2. Prepend ".", indicating that the file lookup should be
                     // relative to the app root directory.
-                    var filePath = path.join('.', request.url.replace(/\.\.\//g, '')),
-                        fileExtension = path.extname(filePath);
+                    var filePath = path.join('.', request.url.replace(/\.\.\//g, ''));
                     // If no file extension is found, this should be a directory,
                     // and directory lookup is not permitted in Pulsr.
-                    if (!fileExtension) {
+                    if (!path.extname(filePath)) {
                         error_handler.handle(request, response, {errno: 403});
                     }
                     else{
-                        var fileHandlerPath = path.resolve(path.join(conf.app.engine, 'fileHandlers', fileExtension.replace(/\./, '') + '.js'));
+                        if (conf.file.handlerOptions[contentType]) {
+                            var fileHandlerPath = path.resolve(path.join(conf.app.engine, 'fileHandlers', conf.file.handlerOptions[contentType].name + '.js'));
 
-                        fs.exists(fileHandlerPath, function (exists) {
-                            if (exists) {
-                                requirejs([fileHandlerPath], function(processFile){
-                                    processFile(request, response, conf.file.handlerOptions[fileExtension]);
-                                });
-                            }
-                            else{
-                                fileCache.stats.get(filePath, function (err, stat) {
-                                    if (err) {
-                                        error_handler.handle(request, response, err);
+                            requirejs([fileHandlerPath], function(processFile){
+                                processFile(request, response, conf.file.handlerOptions[contentType]);
+                            });
+                        }
+                        else{
+                            fileCache.stats.get(filePath, function (err, stat) {
+                                if (err) {
+                                    error_handler.handle(request, response, err);
+                                }
+                                else {
+                                    var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime);
+                                    response.setHeader('Last-Modified', stat.mtime);
+
+                                    if (request.headers['if-none-match'] === etag) {
+                                        response.statusCode = 304;
+                                        response.end();
                                     }
                                     else {
-                                        var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime);
-                                        response.setHeader('Last-Modified', stat.mtime);
+                                        response.setHeader('Content-Type', contentType);
+                                        response.setHeader('ETag', etag);
+                                        response.statusCode = 200;
 
-                                        if (request.headers['if-none-match'] === etag) {
-                                            response.statusCode = 304;
-                                            response.end();
-                                        }
-                                        else {
-                                            response.setHeader('Content-Type', contentType);
-                                            response.setHeader('ETag', etag);
-                                            response.statusCode = 200;
-
-                                            fs.createReadStream(filePath).pipe(response);
-                                        }
+                                        fs.createReadStream(filePath).pipe(response);
                                     }
-                                });
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 }
                 else{

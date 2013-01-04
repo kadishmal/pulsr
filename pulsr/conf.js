@@ -107,35 +107,42 @@ define(['module', 'path'], function(module, path) {
             gzip: '.gz',
             html: '.html'
         },
-        // file handler options
+        // File handler options. Each file handler should be identified by the mime type
+        // of files it handles. For example, *pulsr/fileHandlers/less.js* handles
+        // requests for *.less* and *.css* files which both have mime type of **text/css**.
+        // So this handlerOptions hash should have a `key = "text/css"`, and a hash object
+        // as its value which represent options for that particular file handler.
         handlerOptions: {}
     };
-    // there is a file handler for LESS files
-    // which should preprocess them by compression with gzip
-    conf.file.handlerOptions[conf.file.extensions.less] = {
+    // There is a file handler for LESS/CSS files, and these are options for it.
+    conf.file.handlerOptions[conf.file.allowedMimes.css] = {
+        name: 'less',
         compress: true,
         gzip: true,
         cache: true
     };
-    // we also want a file handler for JS files
-    conf.file.handlerOptions[conf.file.extensions.js] = {
+    // There is also a file handler for JS files.
+    conf.file.handlerOptions[conf.file.allowedMimes.js] = {
+        name: 'js',
         minify: true,
         gzip: true,
         cache: true
     };
-    // We also want a file handler for HTML files
-    conf.file.handlerOptions[conf.file.extensions.html] = {
+    // There is also a file handler for HTML files.
+    conf.file.handlerOptions[conf.file.allowedMimes.html] = {
+        name: 'html',
         gzip: true,
         cache: true
     };
-    // this is a configuration for Google Analytics
+    // These are configurations for Google Analytics.
     conf.googleAnalytics = {
+        // GA tracking code.
         code: '',
         // GA should set cookies not to second level domain
-        // but to the domain used by this site
+        // but to the domain used by this site.
         domain: conf.app.domains.root
     };
-
+    // The database configurations can be defined like this.
     conf.db = {
         host: 'localhost',
         port: 33000,
@@ -143,13 +150,13 @@ define(['module', 'path'], function(module, path) {
         password: "passw",
         name: 'db_name'
     };
-    // below are list of services this applications want to hook with
+    // Below are list of services this applications want to hook with.
     conf.service = {
-        // facebook API related configurations
+        // Facebook API related configurations
         facebook: {
             app_id: 'APP_ID',
             app_secret: 'APP_SECRET',
-            // it should also use the site domain
+            // It should also use the site domain.
             domain: conf.app.domains.root
         }
     };

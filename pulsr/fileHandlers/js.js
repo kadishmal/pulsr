@@ -30,7 +30,7 @@ define(['path', 'conf', 'fs', 'uglify-js', 'error_handler', 'gzip', 'mkdirp', 'm
                     targetFileName = etag + '.js',
                     targetFilePath = path.join(targetDir, targetFileName);
 
-                if (conf.file.handlerOptions[conf.file.extensions.js].cache) {
+                if (options.cache) {
                     response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
                     response.setHeader('Expires', moment(stat.mtime).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
                     // Server must send Vary header if any data is cacheable.
@@ -60,7 +60,7 @@ define(['path', 'conf', 'fs', 'uglify-js', 'error_handler', 'gzip', 'mkdirp', 'm
                                 // if compiled file also doesn't exist, then
                                 // read the source file and compile it.
                                 fs.readFile(sourceFile, function (err, data) {
-                                    if (conf.file.handlerOptions[conf.file.extensions.js].minify) {
+                                    if (options.minify) {
                                         // Compiled JS file hasn't been found, so read the source
                                         // again and compile/minify it.
                                         data = uglify.minify(data.toString(), {fromString: true}).code;

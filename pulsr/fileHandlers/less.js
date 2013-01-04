@@ -38,7 +38,7 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
                     targetFileName = etag + '.css',
                     targetFilePath = path.join(targetDir, targetFileName);
 
-                if (conf.file.handlerOptions[conf.file.extensions.less].cache) {
+                if (options.cache) {
                     response.setHeader('Cache-Control', 'max-age=' + conf.app.cache.maxage);
                     response.setHeader('Expires', moment(stat.mtime).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
                     // Server must send Vary header if any data is cacheable.

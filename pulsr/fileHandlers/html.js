@@ -26,7 +26,7 @@ define(['path', 'conf', 'fs', 'error_handler', 'gzip', 'mkdirp', 'moment', 'file
                     targetFileName = etag + '.js',
                     targetFilePath = path.join(targetDir, targetFileName);
 
-                if (conf.file.handlerOptions[conf.file.extensions.html].cache) {
+                if (options.cache) {
                     response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
                     response.setHeader('Expires', moment(stat.mtime).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
                     // Server must send Vary header if any data is cacheable.

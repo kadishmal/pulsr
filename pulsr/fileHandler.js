@@ -1,10 +1,12 @@
-define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler', 'underscore'], function(conf, requirejs, mime, path, fs, fileCache, error_handler, _) {
-    // A RegEx to chech whether the requested file is located in one of the allowed directories.
-    var allowedDirsRE = new RegExp("^/\\b(" + conf.file.allowedDirs.join("|") + ")\\b/.*"),
-    // `conf.file.allowedMimes` is an object. We need an array of its keys' values.
-    // Underscore has a convenient [toArray()](http://underscorejs.org/#toArray) function for this.
-        allowedMimes = _.toArray(conf.file.allowedMimes);
-
+define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler'], function(conf, requirejs, mime, path, fs, fileCache, error_handler) {
+    // Get an array of allowed directories from an Object keys.
+    // `Array.indexOf()` seems to be faster than its RegExp equivalent on Chrome 23,
+    // which runs on V8 same as Node.js, therefore convert it to an array rather than
+    // to a RegExp.
+    // See http://jsperf.com/regexp-test-vs-array-indexof-performance.
+    var allowedDirs = Object.keys(conf.file.allowedDirs);
+    // Define additional mime types that are missing from
+    // the main [mime](https://github.com/broofa/node-mime) Node.js module.
     mime.define({
         'text/css': ['less'],
         'text/html': ['hb'],
@@ -15,14 +17,19 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler',
 		title: '',
 		pageletCount: 1,
 		handle: function(request, response) {
+            var dir = path.dirname(request.url), temp;
+
+            // Get the root directory name of the requested file.
+            while ((temp = path.dirname(dir)) != '/') {
+                dir = temp;
+            }
+
             // Is this file located in the allowed directory?
-            if (allowedDirsRE.test(request.url)) {
-                var contentType = mime.lookup(request.url);
+            if (allowedDirs.indexOf(dir) > -1) {
+                var contentType = mime.lookup(request.url),
+                    allowedMimes = conf.file.allowedDirs[dir].allowedMimes;
                 // Is this type of file allowed to be served?
-                // `Array.indexOf()` seems to be faster than its RegExp equivalent on Chrome 23,
-                // which runs on V8 same as Node.js.
-                // See http://jsperf.com/regexp-test-vs-array-indexof-performance.
-                if (allowedMimes.indexOf(contentType) > -1) {
+                if (allowedMimes && allowedMimes.indexOf(contentType) > -1) {
                     // 1. Make sure user doesn't try to access restricted areas
                     // using "../" relative path.
                     // 2. Prepend ".", indicating that the file lookup should be

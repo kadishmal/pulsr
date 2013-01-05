@@ -15,7 +15,7 @@ define(['module', 'path'], function(module, path) {
         contents: 'contents',
         less: 'less',
         css: path.join(conf.absPath, 'css'),
-        lessCompiled: path.join(conf.absPath, 'less', 'compiled'),
+        cssCompiled: path.join(conf.absPath, 'assets', 'css'),
         js: 'js',
         jsCompiled: path.join(conf.absPath, 'js', 'compiled'),
         htmlCompiled: path.join(conf.absPath, 'assets', 'html')
@@ -87,12 +87,7 @@ define(['module', 'path'], function(module, path) {
         },
         // Which directories can be looked up by users?
         // Used by fileHandler.js.
-        allowedDirs: [
-            'docs',
-            'img',
-            'js',
-            'less'
-        ],
+        allowedDirs: {},
         // the name of the main layout template file
         mainLayout: 'layout',
         // default layout of a page
@@ -113,6 +108,24 @@ define(['module', 'path'], function(module, path) {
         // So this handlerOptions hash should have a `key = "text/css"`, and a hash object
         // as its value which represent options for that particular file handler.
         handlerOptions: {}
+    };
+    // Define a list of directories and types of files which are allowed to be accessed
+    // in those directories.
+    conf.file.allowedDirs['/docs'] = {
+        allowedMimes: [conf.file.allowedMimes['html'], conf.file.allowedMimes['css']]
+    };
+    conf.file.allowedDirs['/img'] = {
+        allowedMimes: [conf.file.allowedMimes['gif'], conf.file.allowedMimes['png'], conf.file.allowedMimes['jpeg']]
+    };
+    conf.file.allowedDirs['/js'] = {
+        allowedMimes: [conf.file.allowedMimes['js']]
+    };
+    conf.file.allowedDirs['/less'] = {
+        allowedMimes: [conf.file.allowedMimes['css']]
+    };
+    // Allow access to only icon and plain text files from the root directory.
+    conf.file.allowedDirs['/'] = {
+        allowedMimes: [conf.file.allowedMimes['icon'], conf.file.allowedMimes['png'], conf.file.allowedMimes['plain']]
     };
     // There is a file handler for LESS/CSS files, and these are options for it.
     conf.file.handlerOptions[conf.file.allowedMimes.css] = {

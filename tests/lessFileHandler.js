@@ -73,13 +73,34 @@ describe('Pulsr', function (){
                     function requestFile(fileName, done) {
                         var filePath = path.join(path.dirname(path.resolve(module.uri)), '../', fileName);
 
-                        var request = http.get('http://' + conf.app.domains.static + '/' + fileName, function (response) {
+                        http.get('http://' + conf.app.domains.static + '/' + fileName, function (response) {
                             response.should.have.status(404);
                             done();
                         });
                     }
 
                     async.forEach(lessFiles, requestFile, function (err) {
+                        done();
+                    });
+                });
+            });
+
+            it('should return 200 statusCode for CSS/LESS file requests from any allowed directory within 20s.', function (done){
+                // set timeout to 20s
+                this.timeout(20000);
+
+                requirejs(['async', 'fs', 'path', 'module', 'http', 'conf'], function (async, fs, path, module, http, conf) {
+                    // */docs* directory is accessible and has **docco.css** file which should be accessible.
+                    var cssFiles = ['docs/docco.css'];
+
+                    function requestFile(filePath, done) {
+                        http.get('http://' + conf.app.domains.static + '/' + filePath, function (response) {
+                            response.should.have.status(200);
+                            done();
+                        });
+                    }
+
+                    async.forEach(cssFiles, requestFile, function (err) {
                         done();
                     });
                 });

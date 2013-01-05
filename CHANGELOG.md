@@ -1,5 +1,15 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.6 January 5, 2013
+
+- Fix: CSS/LESS files should be served from requested directories not from /less only.
+- Fix: favicon icons as well as plain text files from the root directory should be accessible.
+- Test: added test cases to fileHandler to request favicon icons.
+- Test: add a test lessFileHandler to request CSS files from a different directory.
+- Doc: updated docs.
+- Com: updated comments.
+- Make: added a script to build docs.
+
 ## Version 0.1.5 January 2, 2013
 
 - Enh: define allowed mime types as an object instead of an array.

@@ -1,10 +1,6 @@
-/*
- * js.js
- * A JavaScript file Handler that minifies, uglifies and gzips JS files
- * requested by a client.
- * This module does not validate the request.url. The parent fileHandler.js
- * module should pass this module only .js file requests.
- */
+// A JavaScript file Handler that minifies, uglifies and gzips JS files requested by a client.
+// This module does not validate the request.url. The parent [fileHandler.js](/docs/fileHandler.html)
+// module should pass this module only *.js* file requests.
 define(['path', 'conf', 'fs', 'uglify-js', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, uglify, error_handler, gzip, mkdirp, moment, fileCache) {
     function saveToFile(file, data) {
         fs.writeFile(file, data, function(err) {

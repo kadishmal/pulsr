@@ -1,5 +1,10 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.7 January 5, 2013
+
+- New: created imageFileHandler to handle image file requests.
+- Test: moved image related tests from fileHandler to imageFileHandler.
+
 ## Version 0.1.6 January 5, 2013
 
 - Fix: CSS/LESS files should be served from requested directories not from /less only.

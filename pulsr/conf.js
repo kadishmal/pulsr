@@ -147,6 +147,26 @@ define(['module', 'path'], function(module, path) {
         gzip: true,
         cache: true
     };
+    // There is also a file handler for icon files.
+    conf.file.handlerOptions[conf.file.allowedMimes.icon] = {
+        name: 'image',
+        cache: true
+    };
+    // There is also a file handler for PNG files.
+    conf.file.handlerOptions[conf.file.allowedMimes.png] = {
+        name: 'image',
+        cache: true
+    };
+    // There is also a file handler for JPEG files.
+    conf.file.handlerOptions[conf.file.allowedMimes.jpeg] = {
+        name: 'image',
+        cache: true
+    };
+    // There is also a file handler for GIF files.
+    conf.file.handlerOptions[conf.file.allowedMimes.gif] = {
+        name: 'image',
+        cache: true
+    };
     // These are configurations for Google Analytics.
     conf.googleAnalytics = {
         // GA tracking code.

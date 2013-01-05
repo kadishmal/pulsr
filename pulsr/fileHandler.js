@@ -1,4 +1,4 @@
-define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler'], function(conf, requirejs, mime, path, fs, fileCache, error_handler) {
+define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler', 'underscore'], function(conf, requirejs, mime, path, fs, fileCache, error_handler, _) {
     // Get an array of allowed directories from an Object keys.
     // `Array.indexOf()` seems to be faster than its RegExp equivalent on Chrome 23,
     // which runs on V8 same as Node.js, therefore convert it to an array rather than
@@ -45,7 +45,7 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler']
                             var fileHandlerPath = path.resolve(path.join(conf.app.engine, 'fileHandlers', conf.file.handlerOptions[contentType].name + '.js'));
 
                             requirejs([fileHandlerPath], function(processFile){
-                                processFile(request, response, conf.file.handlerOptions[contentType]);
+                                processFile(request, response, _.extend({contentType: contentType}, conf.file.handlerOptions[contentType]));
                             });
                         }
                         else{

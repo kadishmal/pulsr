@@ -17,7 +17,10 @@ define(['conf', 'fs', 'error_handler', 'moment', 'fileCache'], function (conf, f
 
                 if (options.cache) {
                     response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
-                    response.setHeader('Expires', moment(stat.mtime).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
+                    // we can't directly pass stat.mtime to moment() because moment() directly
+                    // modifies the given object, though it shouldn't. Reported this issue to
+                    // https://github.com/timrwood/moment/issues/592
+                    response.setHeader('Expires', moment(stat.mtime.getTime()).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
                 }
 
                 if (request.headers['if-none-match'] === etag) {

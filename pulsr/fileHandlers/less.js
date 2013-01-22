@@ -41,7 +41,10 @@ define(['path', 'conf', 'fs', 'less', 'error_handler', 'gzip', 'mkdirp', 'moment
 
                 if (options.cache) {
                     response.setHeader('Cache-Control', 'max-age=' + conf.app.cache.maxage);
-                    response.setHeader('Expires', moment(stat.mtime).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
+                    // we can't directly pass stat.mtime to moment() because moment() directly
+                    // modifies the given object, though it shouldn't. Reported this issue to
+                    // https://github.com/timrwood/moment/issues/592
+                    response.setHeader('Expires', moment(stat.mtime.getTime()).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
                     // Server must send Vary header if any data is cacheable.
                     // Refer to http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.6
                     //          http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.44

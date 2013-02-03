@@ -1,15 +1,7 @@
 // A file handler that gzips HTML files requested by a client.
 // This module does not validate the request.url. The parent fileHandler.js
 // module should pass this module only *.html* file requests.
-define(['path', 'conf', 'fs', 'error_handler', 'gzip', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, error_handler, gzip, mkdirp, moment, fileCache) {
-    function saveToFile(file, data) {
-        fs.writeFile(file, data, function(err) {
-            if (err) {
-                console.log('Could not save compiled file to ' + file + '.');
-            }
-        });
-    }
-
+define(['path', 'conf', 'fs', 'error_handler', 'zlib', 'mkdirp', 'moment', 'fileCache'], function (path, conf, fs, error_handler, zlib, mkdirp, moment, fileCache) {
     return function (request, response, options) {
         var fileName = request.url.substring(request.url.lastIndexOf('/') + 1, request.url.lastIndexOf('.')),
             // remove the front / slash for relative path
@@ -23,12 +15,15 @@ define(['path', 'conf', 'fs', 'error_handler', 'gzip', 'mkdirp', 'moment', 'file
             else{
                 var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime),
                     targetDir = path.join(conf.dir.htmlCompiled, fileName),
-                    targetFileName = etag + '.js',
+                    targetFileName = etag + '.html',
                     targetFilePath = path.join(targetDir, targetFileName);
 
                 if (options.cache) {
                     response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
-                    response.setHeader('Expires', moment(stat.mtime).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
+                    // we can't directly pass stat.mtime to moment() because moment() directly
+                    // modifies the given object, though it shouldn't. Reported this issue to
+                    // https://github.com/timrwood/moment/issues/592
+                    response.setHeader('Expires', moment(stat.mtime.getTime()).add('months', 3).utc().format('ddd, DD MMM YYYY HH:mm:ss ZZ'));
                     // Server must send Vary header if any data is cacheable.
                     // Refer to http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.6
                     //          http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.44
@@ -46,52 +41,59 @@ define(['path', 'conf', 'fs', 'error_handler', 'gzip', 'mkdirp', 'moment', 'file
                     response.statusCode = 200;
 
                     function processFile() {
-                        // Read the source file and compress it.
-                        fs.readFile(sourceFile, function (err, data) {
-                            gzip.compressJS(request, data, function (compressedData) {
-                                if (compressedData !== undefined) {
-                                    data = compressedData;
-                                    response.setHeader('Content-Encoding', 'gzip');
-                                    targetFileName += conf.file.extensions.gzip;
-                                    targetFilePath += conf.file.extensions.gzip;
+                        var sourceFileStream = fs.createReadStream(sourceFile);
+
+                        if (
+                            // Check if we want to gzip this resource.
+                            conf.file.handlerOptions[options.contentType].gzip
+                            // Gzipping files below 150 bytes can actually make them larger, so send them uncompressed.
+                            && stat.size > 150
+                            // Check if the client accepts compressed data.
+                            && request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') > -1) {
+                            var gzip = sourceFileStream.pipe(zlib.createGzip());
+
+                            targetFileName += conf.file.extensions.gzip;
+                            targetFilePath += conf.file.extensions.gzip;
+
+                            response.setHeader('Content-Encoding', 'gzip');
+                            // Piping to a response object will automatically close the response
+                            // when piping is done.
+                            gzip.pipe(response);
+
+                            // Now store the gzipped content into a file.
+                            // First, make sure the target directory exists
+                            fs.exists(targetDir, function (exists) {
+                                if (exists) {
+                                    // Remove old compiled files.
+                                    fs.readdir(targetDir, function (err, files) {
+                                        files.forEach(function(file) {
+                                            if (file != targetFileName) {
+                                                fs.unlink(path.join(targetDir, file), function (err) {
+                                                    if (err) {
+                                                        console.log('Could not delete ' + path.join(targetDir, file) + ' file.');
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    });
+
+                                    gzip.pipe(fs.createWriteStream(targetFilePath));
                                 }
-
-                                // First return the response to the client.
-                                // Let the browser start doing its job.
-                                // Then take care of saving the compressed HTML to a file.
-                                response.end(data);
-
-                                // Make sure the target directory exists
-                                fs.exists(targetDir, function (exists) {
-                                    if (exists) {
-                                        // remove old compiled files
-                                        fs.readdir(targetDir, function (err, files) {
-                                            files.forEach(function(file) {
-                                                if (file != targetFileName) {
-                                                    fs.unlink(path.join(targetDir, file), function (err) {
-                                                        if (err) {
-                                                            console.log('Could not delete ' + path.join(targetDir, file) + ' file.');
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        });
-
-                                        saveToFile(targetFilePath, data);
-                                    }
-                                    else {
-                                        mkdirp(targetDir, '0755', function(err) {
-                                            if (err) {
-                                                console.log('Could not create ' + targetDir + ' directory.');
-                                            }
-                                            else{
-                                                saveToFile(targetFilePath, data);
-                                            }
-                                        });
-                                    }
-                                });
+                                else {
+                                    mkdirp(targetDir, '0755', function(err) {
+                                        if (err) {
+                                            console.log('Could not create ' + targetDir + ' directory.');
+                                        }
+                                        else{
+                                            gzip.pipe(fs.createWriteStream(targetFilePath));
+                                        }
+                                    });
+                                }
                             });
-                        });
+                        }
+                        else{
+                            sourceFileStream.pipe(response);
+                        }
                     }
 
                     // First, check if the user accepts gzipped data.
@@ -110,8 +112,6 @@ define(['path', 'conf', 'fs', 'error_handler', 'gzip', 'mkdirp', 'moment', 'file
                         });
                     }
                     else{
-                        console.log('Gzip seems to be disabled for this user request:');
-                        console.log(request);
                         processFile();
                     }
                 }

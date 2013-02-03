@@ -1,5 +1,12 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.8 January 22, 2013
+
+- Fix: a bug from moment() module which modified the cached fs.stat() object.
+- Enh: Gzip HTML files using Streams directly.
+- Test: added htmlFileHandler tests.
+- Test: refactored fileHandler test.
+
 ## Version 0.1.7 January 5, 2013
 
 - New: created imageFileHandler to handle image file requests.

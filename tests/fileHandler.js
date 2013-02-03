@@ -53,7 +53,7 @@ describe('Pulsr', function (){
             this.timeout(20000);
 
             requirejs(['async', 'http', 'conf'], function (async, http, conf) {
-                var favicons = ['robots.txt', 'humans.txt', 'README.md', 'CHANGELOG.md'];
+                var rootDirFiles = ['robots.txt', 'humans.txt', 'README.md', 'CHANGELOG.md'];
 
                 function sendRequest(filePath, done) {
                     http.get('http://' + conf.app.domains.static + '/' + filePath, function (response) {
@@ -62,8 +62,7 @@ describe('Pulsr', function (){
                     });
                 }
 
-                async.forEach(favicons, sendRequest, function (err) {
-                    console.log('favicon is done');
+                async.forEach(rootDirFiles, sendRequest, function (err) {
                     done();
                 });
             });

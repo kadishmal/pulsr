@@ -29,7 +29,23 @@ describe('Pulsr', function (){
                                 else if (stat.isFile()){
                                     http.get('http://' + conf.app.domains.root + '/' + dirName + '/' + fileName, function (response) {
                                         response.should.have.status(200);
-                                        done();
+                                        response.should.be.html;
+                                        response.should.have.header('vary', 'accept-encoding');
+                                        response.headers.should.not.have.property('content-encoding');
+
+                                        http.get({
+                                            host: (conf.app.domains.root.split(':')[0]),
+                                            path: '/' + dirName + '/' + fileName,
+                                            port: 1337,
+                                            headers: { 'accept-encoding': 'gzip' } },
+                                        function (response) {
+                                            response.should.have.status(200);
+                                            response.should.be.html;
+                                            response.should.have.header('content-encoding', 'gzip');
+                                            response.should.have.header('vary', 'accept-encoding');
+
+                                            done();
+                                        });
                                     });
                                 }
                                 else{

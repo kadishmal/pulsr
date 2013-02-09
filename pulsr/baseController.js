@@ -71,8 +71,7 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fil
                                         };
 
                                     requirejs([pageletPath], function(pagelet) {
-                                        pagelet.options = info.options;
-                                        pagelet.run(sendChunk, request, controller);
+                                      pagelet.run(sendChunk, request, controller, info.options);
                                     });
                                 };
 

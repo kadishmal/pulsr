@@ -1,9 +1,14 @@
 <div id="fb-root"></div>
-<div class="fixed">
+<div class="fixed contain-to-grid">
     <nav class="top-bar">
       <ul>
-        <li class="name"><a>App name</a></li>
+        <li class="name"><a href="/">Pulsr</a></li>
       </ul>
+      <section id="top-nav">
+        <ul class="left">
+          <li><a href="/docs/app.html">Docs</a></li>
+        </ul>
+      </section>
     </nav>
 </div>
 <div class="row">
@@ -11,3 +16,9 @@
         <div class="row" id="pageView"></div>
     </div>
 </div>
+<footer class="row">
+    <nav class="eight columns" id="footer-nav"></nav>
+    <div class="four columns">
+		<p class="font12">© 2013 Esen Sagynov</p>
+	</div>
+</footer>

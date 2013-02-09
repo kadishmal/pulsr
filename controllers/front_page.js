@@ -5,7 +5,21 @@ define(['baseController', 'module'], function(BaseController, module) {
         layout: 'front-page',
         css: ['front-page.less'],
         pagelets: [
-            {name: 'ga'}
+            {name: 'ga'},
+            {
+                name: 'navigation',
+                options: {
+                    class: 'left',
+                    targetId: 'top-nav'
+                }
+            },
+            {
+                name: 'navigation',
+                options: {
+                    class: 'inline-list right',
+                    targetId: 'footer-nav'
+                }
+            }
         ]
     });
 });

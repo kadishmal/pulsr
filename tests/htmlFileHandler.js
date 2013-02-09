@@ -10,7 +10,7 @@ describe('Pulsr', function (){
     describe('htmlFileHandler', function (){
         it('should return 200 statusCode for HTML file request within 20s', function (done){
             // set timeout to 20s
-            this.timeout(20000);
+            this.timeout(30000);
 
             requirejs(['async', 'fs', 'path', 'module', 'http', 'conf'], function (async, fs, path, module, http, conf) {
                 var htmlDirs = ['docs'];
@@ -31,6 +31,7 @@ describe('Pulsr', function (){
                                         response.should.have.status(200);
                                         response.should.be.html;
                                         response.should.have.header('vary', 'accept-encoding');
+                                        response.should.have.header('etag');
                                         response.headers.should.not.have.property('content-encoding');
 
                                         http.get({
@@ -42,9 +43,23 @@ describe('Pulsr', function (){
                                             response.should.have.status(200);
                                             response.should.be.html;
                                             response.should.have.header('content-encoding', 'gzip');
+                                            response.should.have.header('etag');
                                             response.should.have.header('vary', 'accept-encoding');
 
-                                            done();
+                                            http.get({
+                                                host: (conf.app.domains.root.split(':')[0]),
+                                                path: '/' + dirName + '/' + fileName,
+                                                port: 1337,
+                                                headers: {
+                                                    'accept-encoding': 'gzip',
+                                                    'if-none-match': response.headers['etag']
+                                                }
+                                            }, function (response) {
+                                                response.should.have.status(304);
+                                                response.should.have.header('vary', 'accept-encoding');
+
+                                                done();
+                                            });
                                         });
                                     });
                                 }

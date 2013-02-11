@@ -1,5 +1,16 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.1.9 February 9, 2013
+
+- New: added a "navigation" pagelet to display site navigation menus.
+- Enh: don't assign pagelet options to real pagelets. Instead pass them as function argument.
+- Enh: added navigation menu to be displayed on the front page.
+- Enh: load RequireJs from the same static domain instead of cdnjs.cloudflare.com. No need to resolve one more DNS. Can combine RequireJS configurations inside the same file.
+- Enh: redirect root domain requests to www subdomain.
+- Test: added more tests to htmlFileHandler.
+- Test: added a navigation pagelet test.
+- Test: added more tests to htmlFileHandler to check 304 HTTP response.
+
 ## Version 0.1.8 January 22, 2013
 
 - Fix: a bug from moment() module which modified the cached fs.stat() object.

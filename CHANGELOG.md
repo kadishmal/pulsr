@@ -1,5 +1,10 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.2.0 February 12, 2013
+
+- New: added a microConf module which will allow users to override default system configurations.
+- Ref: updated Pulsr to use the new microConf to manage framework-wide configurations. All tests pass.
+
 ## Version 0.1.9 February 9, 2013
 
 - New: added a "navigation" pagelet to display site navigation menus.

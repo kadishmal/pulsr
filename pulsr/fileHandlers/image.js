@@ -16,7 +16,7 @@ define(['conf', 'fs', 'error_handler', 'moment', 'fileCache'], function (conf, f
                 var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime);
 
                 if (options.cache) {
-                    response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
+                    response.setHeader('Cache-Control', 'public, max-age=' + conf.get('app.cache.maxage'));
                     // we can't directly pass stat.mtime to moment() because moment() directly
                     // modifies the given object, though it shouldn't. Reported this issue to
                     // https://github.com/timrwood/moment/issues/592

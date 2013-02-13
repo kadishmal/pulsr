@@ -10,9 +10,9 @@ define(['async-cache', 'fs', 'conf'], function(AsyncCache, fs, conf) {
     var stats = new AsyncCache({
         // options passed directly to the internal lru cache
         // indicating how many items to store in a fileCache
-        max: conf.app.cache.fileCache.stats.max,
+        max: conf.get('app.cache.fileCache.stats.max'),
         // refresh the cache every maxAge time
-        maxAge: conf.app.cache.fileCache.stats.maxAge,
+        maxAge: conf.get('app.cache.fileCache.stats.maxAge'),
         // method to load a thing if it's not in the cache.
         // key must be unique in the context of this cache.
         load: function (filePath, cb) {
@@ -28,9 +28,9 @@ define(['async-cache', 'fs', 'conf'], function(AsyncCache, fs, conf) {
     layouts = new AsyncCache({
         // options passed directly to the internal lru cache
         // indicating how many items to store in a fileCache
-        max: conf.app.cache.fileCache.layouts.max,
+        max: conf.get('app.cache.fileCache.layouts.max'),
         // refresh the cache every maxAge time
-        maxAge: conf.app.cache.fileCache.layouts.maxAge,
+        maxAge: conf.get('app.cache.fileCache.layouts.maxAge'),
         // method to load a thing if it's not in the cache.
         // key must be unique in the context of this cache.
         load: function (filePath, cb) {

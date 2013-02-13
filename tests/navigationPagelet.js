@@ -3,7 +3,10 @@ var should = require("should"),
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 describe('Pulsr', function (){
@@ -13,7 +16,7 @@ describe('Pulsr', function (){
             this.timeout(20000);
 
             requirejs(['async', 'http', 'conf'], function (async, http, conf) {
-                http.get('http://' + conf.app.domains.static, function (response) {
+                http.get('http://' + conf.get('app.domains.static'), function (response) {
                     var body = '';
 
                     response.on('data', function (chunk) {

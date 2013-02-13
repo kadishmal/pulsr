@@ -3,7 +3,10 @@ var should = require("should"),
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 describe('Pulsr', function (){
@@ -13,7 +16,7 @@ describe('Pulsr', function (){
             this.timeout(15000);
 
             requirejs(['http', 'conf'], function (http, conf) {
-                http.get('http://' + conf.app.domains.root + '/api', function (response) {
+                http.get('http://' + conf.get('app.domains.www') + '/api', function (response) {
                     response.should.have.status(200);
 
                     var body = '';
@@ -41,7 +44,7 @@ describe('Pulsr', function (){
             this.timeout(15000);
 
             requirejs(['http', 'conf'], function (http, conf) {
-                http.get('http://' + conf.app.domains.root + '/api/someGetAction', function (response) {
+                http.get('http://' + conf.get('app.domains.www') + '/api/someGetAction', function (response) {
                     response.should.have.status(200);
 
                     var body = '';

@@ -3,7 +3,10 @@ var should = require("should"),
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 describe('Pulsr', function (){
@@ -16,7 +19,7 @@ describe('Pulsr', function (){
                 var restrictedDirs = ['img', 'js', 'less', 'pulsr', 'controller', 'nonExistingDir', 'js/bootstrap', 'less/foundation', 'assets'];
 
                 function requestDir(dirName, done) {
-                    http.get('http://' + conf.app.domains.static + '/' + dirName, function (response) {
+                    http.get('http://' + conf.get('app.domains.static') + '/' + dirName, function (response) {
                         response.should.have.status(403);
                         done();
                     });
@@ -36,7 +39,7 @@ describe('Pulsr', function (){
                 var restrictedDirs = ['pulsr/conf.js', 'pagelets/ga/ga.js', 'contents/404.md', 'controllers/api.js', 'node_modules/bin/docco', 'nonExistingDir', 'tests/baseController.js', 'views/layout.hb', '../aboveRootNonExistDir', 'app.js', '.travis.yml', '.gitignore', 'Makefile', 'package.json', 'assets'];
 
                 function requestDir(dirName, done) {
-                    http.get('http://' + conf.app.domains.static + '/' + dirName, function (response) {
+                    http.get('http://' + conf.get('app.domains.static') + '/' + dirName, function (response) {
                         response.should.have.status(403);
                         done();
                     });
@@ -56,7 +59,7 @@ describe('Pulsr', function (){
                 var rootDirFiles = ['robots.txt', 'humans.txt', 'README.md', 'CHANGELOG.md'];
 
                 function sendRequest(filePath, done) {
-                    http.get('http://' + conf.app.domains.static + '/' + filePath, function (response) {
+                    http.get('http://' + conf.get('app.domains.static') + '/' + filePath, function (response) {
                         response.should.have.status(200);
                         done();
                     });

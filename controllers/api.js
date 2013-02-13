@@ -31,7 +31,7 @@ define(['restController', 'module', 'conf'], function(RestController, module, co
             // Some other API called from a client.
             someGetAction: function (request, response) {
                 // For example, first make sure this request is generated from our own site.
-                if (request.headers && request.headers['host'] && request.headers['host'].indexOf(conf.app.domains.root) == 0) {
+                if (request.headers && request.headers['host'] && request.headers['host'].indexOf(conf.get('app.domains.www')) == 0) {
                     // As a sample response return this API and action info.
                     response.end(JSON.stringify({
                         controller: 'api',

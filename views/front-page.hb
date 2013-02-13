@@ -3,6 +3,7 @@
     <nav class="top-bar">
       <ul>
         <li class="name"><a href="/">Pulsr</a></li>
+        <li class="toggle-topbar"><a href="#"></a></li>
       </ul>
       <section id="top-nav">
         <ul class="left">

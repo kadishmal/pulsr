@@ -7,14 +7,14 @@ define(['fs', 'path', 'conf', 'marked'], function(fs, path, conf, marked) {
             var output = '';
 
             if (contents.length) {
-                var contentPath = path.join(conf.dir.contents, contents[0] + conf.file.extensions.markdown);
+                var contentPath = path.join(conf.get('path.contents'), contents[0] + conf.get('file.extensions.markdown'));
 
                 // Since this is a single post, we can directly check if it exists
                 fs.exists(contentPath, function (exists) {
                     if (!exists) {
                         // inform the controller to send 404 Status Code to a client.
                         display(false);
-                        contentPath = path.join(conf.dir.contents, '404' + conf.file.extensions.markdown);
+                        contentPath = path.join(conf.get('path.contents'), '404' + conf.get('file.extensions.markdown'));
                     }
 
                     // prepare the page (grid) for the post.

@@ -4,7 +4,7 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler',
     // which runs on V8 same as Node.js, therefore convert it to an array rather than
     // to a RegExp.
     // See http://jsperf.com/regexp-test-vs-array-indexof-performance.
-    var allowedDirs = Object.keys(conf.file.allowedDirs);
+    var allowedDirs = Object.keys(conf.get('file.allowedDirs'));
     // Define additional mime types that are missing from
     // the main [mime](https://github.com/broofa/node-mime) Node.js module.
     mime.define({
@@ -27,7 +27,7 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler',
             // Is this file located in the allowed directory?
             if (allowedDirs.indexOf(dir) > -1) {
                 var contentType = mime.lookup(request.url),
-                    allowedMimes = conf.file.allowedDirs[dir].allowedMimes;
+                    allowedMimes = conf.get('file.allowedDirs')[dir].allowedMimes;
                 // Is this type of file allowed to be served?
                 if (allowedMimes && allowedMimes.indexOf(contentType) > -1) {
                     // 1. Make sure user doesn't try to access restricted areas
@@ -41,11 +41,11 @@ define(['conf', 'requirejs', 'mime', 'path', 'fs', 'fileCache', 'error_handler',
                         error_handler.handle(request, response, {errno: 403});
                     }
                     else{
-                        if (conf.file.handlerOptions[contentType]) {
-                            var fileHandlerPath = path.resolve(path.join(conf.app.engine, 'fileHandlers', conf.file.handlerOptions[contentType].name + '.js'));
+                        if (conf.get('file.handlerOptions').hasOwnProperty(contentType)) {
+                            var fileHandlerPath = path.resolve(path.join(conf.get('app.engine'), 'fileHandlers', conf.get('file.handlerOptions')[contentType].name + '.js'));
 
                             requirejs([fileHandlerPath], function(processFile){
-                                processFile(request, response, _.extend({contentType: contentType}, conf.file.handlerOptions[contentType]));
+                                processFile(request, response, _.extend({contentType: contentType}, conf.get('file.handlerOptions')[contentType]));
                             });
                         }
                         else{

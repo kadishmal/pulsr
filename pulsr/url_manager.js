@@ -9,7 +9,7 @@ define(['url_patterns', 'requirejs', 'conf', 'path', 'session', 'error_handler',
         // If the hostname misses the "www" part, redirect to "www" domain.
         // The allows to use cookie-free domains for static files.
         // Refer to http://developer.yahoo.com/performance/rules.html#cookie_free
-        if ('www.' + request.headers.host == conf.app.domains.root) {
+        if ('www.' + request.headers.host == conf.get('app.domains.www')) {
             // 301: Permanently Moved.
             response.writeHead(301, {
                 'Location': 'http://www.' + request.headers.host + request.url
@@ -61,7 +61,7 @@ define(['url_patterns', 'requirejs', 'conf', 'path', 'session', 'error_handler',
             request.on('end', function () {
                 for (var pattern in regExpStore) {
                     if ((match = regExpStore[pattern].exec(request.url))) {
-                        var controllerPath = path.join(conf.dir.controllers, url_patterns[pattern]);
+                        var controllerPath = path.join(conf.get('path.controllers'), url_patterns[pattern]);
 
                         pulsrController = url_patterns[pattern];
                         request.params = match;

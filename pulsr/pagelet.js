@@ -17,7 +17,7 @@ define(['module', 'path', 'conf'], function(module, path, conf) {
         });
 
         this.__defineGetter__('fullPath', function () {
-            return path.join(this.dir, this.dirName + conf.file.extensions.template);
+            return path.join(this.dir, this.dirName + conf.get('file.extensions.template'));
         });
     };
 });

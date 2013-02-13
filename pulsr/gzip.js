@@ -3,7 +3,7 @@ define(['conf', 'zlib'], function(conf, zlib) {
     function compress(mimeType, request, data, callback) {
         if (
             // Check if we want to gzip this resource.
-            conf.file.handlerOptions[mimeType].gzip
+            conf.get('file.handlerOptions')[mimeType].gzip
             // Gzipping files below 150 bytes can actually make them larger, so send them uncompressed.
             && data.length > 150
             // Check if the client accepts compressed data.
@@ -25,10 +25,10 @@ define(['conf', 'zlib'], function(conf, zlib) {
 
     return {
         compressJS: function (request, data, callback) {
-            compress(conf.file.allowedMimes.js, request, data, callback);
+            compress(conf.get('file.allowedMimes.js'), request, data, callback);
         },
         compressLESS: function (request, data, callback) {
-            compress(conf.file.allowedMimes.css, request, data, callback);
+            compress(conf.get('file.allowedMimes.css'), request, data, callback);
         }
     };
 });

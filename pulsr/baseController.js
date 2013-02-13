@@ -1,7 +1,7 @@
 define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fileCache', 'underscore'], function(fs, Handlebars, conf, requirejs, module, path, async, fileCache, _) {
-    var views = conf.dir.views,
-        templateExtension = conf.file.extensions.template,
-        mainLayoutPath = path.join(views, conf.file.mainLayout + templateExtension);
+    var views = conf.get('path.views'),
+        templateExtension = conf.get('file.extensions.template'),
+        mainLayoutPath = path.join(views, conf.get('file.mainLayout') + templateExtension);
 
     return {
         title: '',
@@ -21,7 +21,7 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fil
                 }
                 else {
                     if (!controller.layout) {
-                        controller.layout = conf.file.defaultPageLayout;
+                        controller.layout = conf.get('file.defaultPageLayout');
                     }
 
                     var layout = Handlebars.compile(data),
@@ -38,7 +38,7 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fil
                                 headerSent = false,
                                 cssStyles = '',
                                 renderPagelet = function(info, done) {
-                                    var pageletPath = path.join(conf.dir.pagelets, info.name, info.name),
+                                    var pageletPath = path.join(conf.get('path.pagelets'), info.name, info.name),
                                         sendChunk = function (data, more) {
                                             if (!headerSent){
                                                 headerSent = true;
@@ -80,13 +80,13 @@ define(['fs', 'handlebars', 'conf', 'requirejs', 'module', 'path', 'async', 'fil
                             if (controller.css) {
                                 controller.css.forEach(function (file) {
                                     cssStyles += '<link rel="stylesheet" href="//' +
-                                        conf.app.domains.static + '/less/' + file + '">';
+                                        conf.get('app.domains.static') + '/less/' + file + '">';
                                 });
                             }
 
                             layout = layout({
                                 title: (typeof controller.title === 'function' ? controller.title(request) : controller.title),
-                                staticDomain: conf.app.domains.static,
+                                staticDomain: conf.get('app.domains.static'),
                                 cssStyles: cssStyles,
                                 body: body()
                             });

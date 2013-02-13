@@ -6,7 +6,7 @@ define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars', '
     return _.extend(pagelet, {
         moduleUri: module.uri,
         run: function (display) {
-            var pageletLayoutPath = path.join(this.dir, this.dirName + conf.file.extensions.template);
+            var pageletLayoutPath = path.join(this.dir, this.dirName + conf.get('file.extensions.template'));
             // get the pagelet layout
             fileCache.layouts.get(pageletLayoutPath, function (err, data) {
                 if (err) {
@@ -16,8 +16,8 @@ define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars', '
                     var template = Handlebars.compile(data);
 
                     data = template({
-                        gaCode: conf.googleAnalytics.code,
-                        domain: conf.googleAnalytics.domain
+                        gaCode: conf.get('pagelets.ga.code'),
+                        domain: conf.get('pagelets.ga.domain')
                     });
                 }
 

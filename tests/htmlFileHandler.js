@@ -3,7 +3,10 @@ var should = require("should"),
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 describe('Pulsr', function (){
@@ -27,7 +30,7 @@ describe('Pulsr', function (){
                                     throw err;
                                 }
                                 else if (stat.isFile()){
-                                    http.get('http://' + conf.app.domains.root + '/' + dirName + '/' + fileName, function (response) {
+                                    http.get('http://' + conf.get('app.domains.www') + '/' + dirName + '/' + fileName, function (response) {
                                         response.should.have.status(200);
                                         response.should.be.html;
                                         response.should.have.header('vary', 'accept-encoding');
@@ -35,7 +38,7 @@ describe('Pulsr', function (){
                                         response.headers.should.not.have.property('content-encoding');
 
                                         http.get({
-                                            host: (conf.app.domains.root.split(':')[0]),
+                                            host: (conf.get('app.domains.www').split(':')[0]),
                                             path: '/' + dirName + '/' + fileName,
                                             port: 1337,
                                             headers: { 'accept-encoding': 'gzip' } },
@@ -47,7 +50,7 @@ describe('Pulsr', function (){
                                             response.should.have.header('vary', 'accept-encoding');
 
                                             http.get({
-                                                host: (conf.app.domains.root.split(':')[0]),
+                                                host: (conf.get('app.domains.www').split(':')[0]),
                                                 path: '/' + dirName + '/' + fileName,
                                                 port: 1337,
                                                 headers: {
@@ -99,7 +102,7 @@ describe('Pulsr', function (){
                 var htmlFiles = ['docs/zubazuba.html', 'docs/lambalamba.html'];
 
                 function requestFile(filePath, done) {
-                    http.get('http://' + conf.app.domains.static + '/' + filePath, function (response) {
+                    http.get('http://' + conf.get('app.domains.static') + '/' + filePath, function (response) {
                         response.should.have.status(404);
                         done();
                     });

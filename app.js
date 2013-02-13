@@ -2,10 +2,15 @@ var requirejs = require('requirejs');
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 requirejs(['conf', 'server'], function(conf, app) {
-    app.server.listen(conf.port, null);
-    console.log('App started on port ' + conf.port);
+    var port = conf.get('app.port');
+
+    app.server.listen(port, null);
+    console.log('App started on port ' + port);
 });

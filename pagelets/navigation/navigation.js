@@ -1,7 +1,7 @@
 // navigation.js
 // Displays main menu
 define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars'], function(Pagelet, _, fs, path, module, conf, Handlebars) {
-    var menuFile = path.join(conf.root_dir, path.dirname(module.uri), 'data');
+    var menuFile = path.join(conf.get('path.root_dir'), path.dirname(module.uri), 'data');
 
     Handlebars.registerHelper('link', function(text, url) {
         text = Handlebars.Utils.escapeExpression(text);
@@ -29,7 +29,7 @@ define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars'], 
         run: function (display, request, controller, options) {
             var _this = this;
 
-            fs.readFile(path.join(_this.dir, _this.dirName + conf.file.extensions.template), 'utf8', function (err, data) {
+            fs.readFile(path.join(_this.dir, _this.dirName + conf.get('file.extensions.template')), 'utf8', function (err, data) {
                 if (err) {
                     console.log('Could not read ' + _this.dir + ' pagelet.');
                     display();

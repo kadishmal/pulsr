@@ -3,7 +3,10 @@ var should = require("should"),
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 describe('Pulsr', function (){
@@ -27,7 +30,7 @@ describe('Pulsr', function (){
                                     throw err;
                                 }
                                 else if (stat.isFile()){
-                                    http.get('http://' + conf.app.domains.static + '/' + dirName + '/' + fileName, function (response) {
+                                    http.get('http://' + conf.get('app.domains.static') + '/' + dirName + '/' + fileName, function (response) {
                                         response.should.have.status(200);
                                         done();
                                     });
@@ -68,7 +71,7 @@ describe('Pulsr', function (){
                 var imgFiles = ['img/apple.png', 'img/banana.png', 'img/jake.gif', 'img/zoo.jpg'];
 
                 function requestFile(filePath, done) {
-                    http.get('http://' + conf.app.domains.static + '/' + filePath, function (response) {
+                    http.get('http://' + conf.get('app.domains.static') + '/' + filePath, function (response) {
                         response.should.have.status(404);
                         done();
                     });
@@ -88,7 +91,7 @@ describe('Pulsr', function (){
                 var favicons = ['favicon.ico', 'apple-touch-icon-57x57-precomposed.png'];
 
                 function sendRequest(filePath, done) {
-                    http.get('http://' + conf.app.domains.static + '/' + filePath, function (response) {
+                    http.get('http://' + conf.get('app.domains.static') + '/' + filePath, function (response) {
                         response.should.have.status(200);
                         done();
                     });

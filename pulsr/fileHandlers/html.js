@@ -14,12 +14,12 @@ define(['path', 'conf', 'fs', 'error_handler', 'zlib', 'mkdirp', 'moment', 'file
             }
             else{
                 var etag = stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime),
-                    targetDir = path.join(conf.dir.htmlCompiled, fileName),
+                    targetDir = path.join(conf.get('path.htmlCompiled'), fileName),
                     targetFileName = etag + '.html',
                     targetFilePath = path.join(targetDir, targetFileName);
 
                 if (options.cache) {
-                    response.setHeader('Cache-Control', 'public, max-age=' + conf.app.cache.maxage);
+                    response.setHeader('Cache-Control', 'public, max-age=' + conf.get('app.cache.maxage'));
                     // we can't directly pass stat.mtime to moment() because moment() directly
                     // modifies the given object, though it shouldn't. Reported this issue to
                     // https://github.com/timrwood/moment/issues/592
@@ -45,15 +45,15 @@ define(['path', 'conf', 'fs', 'error_handler', 'zlib', 'mkdirp', 'moment', 'file
 
                         if (
                             // Check if we want to gzip this resource.
-                            conf.file.handlerOptions[options.contentType].gzip
+                            conf.get('file.handlerOptions')[options.contentType].gzip
                             // Gzipping files below 150 bytes can actually make them larger, so send them uncompressed.
                             && stat.size > 150
                             // Check if the client accepts compressed data.
                             && request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') > -1) {
                             var gzip = sourceFileStream.pipe(zlib.createGzip());
 
-                            targetFileName += conf.file.extensions.gzip;
-                            targetFilePath += conf.file.extensions.gzip;
+                            targetFileName += conf.get('file.extensions.gzip');
+                            targetFilePath += conf.get('file.extensions.gzip');
 
                             response.setHeader('Content-Encoding', 'gzip');
                             // Piping to a response object will automatically close the response
@@ -98,7 +98,7 @@ define(['path', 'conf', 'fs', 'error_handler', 'zlib', 'mkdirp', 'moment', 'file
 
                     // First, check if the user accepts gzipped data.
                     if (request.headers['accept-encoding'] && request.headers['accept-encoding'].indexOf('gzip') > -1) {
-                        var compressedFile = targetFilePath + conf.file.extensions.gzip;
+                        var compressedFile = targetFilePath + conf.get('file.extensions.gzip');
                         // Check if the compressed version of the file already exists.
                         fs.exists(compressedFile, function (exists) {
                             if (exists) {

@@ -3,7 +3,10 @@ var should = require("should"),
 
 requirejs.config({
     baseUrl: 'pulsr',
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        conf: '../conf/conf'
+    }
 });
 
 describe('Pulsr', function (){
@@ -29,7 +32,7 @@ describe('Pulsr', function (){
                                         throw err;
                                     }
                                     else if (stat.isFile()){
-                                        http.get('http://' + conf.app.domains.static + '/' + dirName + '/' + fileName, function (response) {
+                                        http.get('http://' + conf.get('app.domains.static') + '/' + dirName + '/' + fileName, function (response) {
                                             response.should.have.status(200);
                                             done();
                                         });
@@ -73,7 +76,7 @@ describe('Pulsr', function (){
                     function requestFile(fileName, done) {
                         var filePath = path.join(path.dirname(path.resolve(module.uri)), '../', fileName);
 
-                        var request = http.get('http://' + conf.app.domains.static + '/' + fileName, function (response) {
+                        var request = http.get('http://' + conf.get('app.domains.static') + '/' + fileName, function (response) {
                             response.should.have.status(404);
                             done();
                         });

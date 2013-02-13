@@ -6,7 +6,7 @@ define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf'], function(Pagel
     return _.extend(pagelet, {
         moduleUri: module.uri,
         run: function (display, request, controller, options) {
-            var layoutPath = path.join(conf.dir.pagelets, this.dirName, 'layouts', options.layout),
+            var layoutPath = path.join(conf.get('path.pagelets'), this.dirName, 'layouts', options.layout),
                 // if there are no contents specifically set to be displayed
                 // then check the request URL if a specific content URL is being
                 // requested.

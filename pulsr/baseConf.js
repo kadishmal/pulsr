@@ -15,18 +15,30 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                     300),
                 fileCache: {
                     stats: {
-                        // options passed directly to the internal lru cache
-                        // indicating how many items to store in a fileCache
+                        // Options passed directly to the internal lru cache
+                        // indicating how many items to store in a fileCache.
                         max: 100,
-                        // refresh the cache every 10 minutes
-                        maxAge: 1000 * 60 * 10
+                        // maxAge property for lru cache.
+                        maxAge: function () {
+                            return (isProduction ? conf.get('app.cache.fileCache.stats.maxAgeProduction') : conf.get('app.cache.fileCache.stats.maxAgeDev')) * 60 * 1000;
+                        },
+                        // Don't cache file stats in dev environment.
+                        maxAgeDev: 0,
+                        // In production cache file stats for 10 minutes.
+                        maxAgeProduction: 10
                     },
                     layouts: {
-                        // options passed directly to the internal lru cache
-                        // indicating how many items to store in a fileCache
+                        // Options passed directly to the internal lru cache
+                        // indicating how many items to store in a fileCache.
                         max: 100,
-                        // refresh the cache every 10 minutes
-                        maxAge: 1000 * 60 * 10
+                        // maxAge property for lru cache.
+                        maxAge: function () {
+                            return (isProduction ? conf.get('app.cache.fileCache.stats.maxAgeProduction') : conf.get('app.cache.fileCache.stats.maxAgeDev')) * 60 * 1000;
+                        },
+                        // Don't cache file stats in dev environment.
+                        maxAgeDev: 0,
+                        // In production cache file stats for 10 minutes.
+                        maxAgeProduction: 10
                     }
                 }
             },

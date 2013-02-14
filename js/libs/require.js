@@ -1,9 +1,7 @@
 document.getElementsByTagName('html')[0].setAttribute('class', 'js');
 
 var require = {
-    baseUrl: 'js',
     paths: {
-//        requirejs: '//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.1/require.min',
         jQuery: '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min',
         underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min',
         Backbone: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min',
@@ -16,9 +14,6 @@ var require = {
         popover: 'libs/bootstrap/bootstrap-popover'
     },
     shim: {
-        requirejs: {
-            exports: 'requirejs'
-        },
         Backbone: {
             deps: ['underscore', 'jQuery'],
             exports: 'Backbone'

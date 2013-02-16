@@ -33,7 +33,7 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                         max: 100,
                         // maxAge property for lru cache.
                         maxAge: function () {
-                            return (isProduction ? conf.get('app.cache.fileCache.stats.maxAgeProduction') : conf.get('app.cache.fileCache.stats.maxAgeDev')) * 60 * 1000;
+                            return (isProduction ? conf.get('app.cache.fileCache.layouts.maxAgeProduction') : conf.get('app.cache.fileCache.layouts.maxAgeDev')) * 60 * 1000;
                         },
                         // Don't cache file stats in dev environment.
                         maxAgeDev: 0,

@@ -1,49 +1,43 @@
 // A micro Node.js module to handle in-memory hierarchical configuration.
-// The module also allows to define getter functions as parameters.
+// The module also allows to define getter functions as values, not just
+// literal values.
+// ## Usage:
+//     conf.set(object);
+//     conf.set(string_key, literal_value);
+//     conf.set(string_key, object_value);
+//     conf.get(string_key);
 define(function() {
 	return new function () {
-        var splitCharsRE = /[:.]/;
+        var splitCharsRE = /[:.]/,
+            cache = {};
 
         this.store = new function () {};
 
-        function _set(store, key, value) {
+        function _set(store, key, value, chainKey) {
             if (typeof key == 'object') {
                 var obj = key;
 
                 for (var prop in obj) {
-                    _set(store, prop, obj[prop]);
+                    _set(store, prop, obj[prop], chainKey);
                 }
             }
             else{
-                if (typeof value === 'object') {
-                    store[key] = new function () {};
+                chainKey += (chainKey.length ? '.' : '') + key;
 
-                    var keyStore = store[key];
+                if (typeof value === 'object') {
+                    var keyStore = store[key] = new function () {};
+                    cache[chainKey] = keyStore;
 
                     for (var prop in value) {
-                        var val = value[prop],
-                            valType = typeof val;
-
-                        if (valType === 'function') {
-                            keyStore.__defineGetter__(prop, val);
-                        }
-                        else if (valType === 'object'){
-                            keyStore[prop] = new function () {};
-
-                            for (var p in val) {
-                                _set(keyStore[prop], p, val[p]);
-                            }
-                        }
-                        else{
-                            keyStore[prop] = val;
-                        }
+                        _set(keyStore, prop, value[prop], chainKey);
                     }
                 }
                 else if (typeof value === 'function') {
                     store.__defineGetter__(key, value);
+                    cache[chainKey] = value;
                 }
                 else{
-                    store[key] = value;
+                    cache[chainKey] = store[key] = value;
                 }
             }
         };
@@ -55,42 +49,35 @@ define(function() {
                 // TODO: How about a real number (eg. 123.75) wrapped in quotes?
                 if (keyType === 'string') {
                     var props = key.split(splitCharsRE),
-                        store = this.store;
+                        store = this.store,
+                        chainKey = '';
 
                     for (var i = 0; i < props.length - 1; ++i) {
+                        chainKey += (chainKey.length ? '.' : '') + props[i];
+
                         if (store.hasOwnProperty(props[i])) {
                             store = store[props[i]];
                         }
                         else{
-                            store = store[props[i]] = {};
+                            cache[chainKey] = store = store[props[i]] = {};
                         }
                     }
 
-                    _set(store, props.pop(), value);
+                    _set(store, props.pop(), value, key);
                 }
                 else{
-                    _set(this.store, key, value);
+                    // Pass an empty chainKey for an object.
+                    _set(this.store, key, value, '');
                 }
             }
         };
 
         this.get = function (key) {
-            var props = key.split(splitCharsRE), obj;
-
-            while (key = props.shift()) {
-                if (!obj) {
-                    obj = this.store[key];
-                }
-                else{
-                    obj = obj[key];
-                }
+            if (typeof cache[key] === 'function') {
+                return cache[key]();
             }
 
-            if (typeof obj === 'function') {
-                return obj();
-            }
-
-            return obj;
+            return cache[key];
         };
     };
 });

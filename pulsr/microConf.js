@@ -63,7 +63,7 @@ define(function() {
                         }
                     }
 
-                    _set(store, props.pop(), value, key);
+                    _set(store, props.pop(), value, chainKey);
                 }
                 else{
                     // Pass an empty chainKey for an object.

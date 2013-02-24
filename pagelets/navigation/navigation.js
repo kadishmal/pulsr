@@ -1,8 +1,6 @@
 // navigation.js
 // Displays main menu
-define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars'], function(Pagelet, _, fs, path, module, conf, Handlebars) {
-    var menuFile = path.join(conf.get('path.root_dir'), path.dirname(module.uri), 'data');
-
+define(['pagelet', 'underscore', 'path', 'module', 'conf', 'handlebars', 'requirejs', 'fileCache'], function(Pagelet, _, path, module, conf, Handlebars, requirejs, fileCache) {
     Handlebars.registerHelper('link', function(text, url) {
         text = Handlebars.Utils.escapeExpression(text);
         url  = Handlebars.Utils.escapeExpression(url);
@@ -22,20 +20,21 @@ define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'handlebars'], 
         return out;
     });
 
-    var pagelet = new Pagelet;
+    var pagelet = new Pagelet();
 
     return _.extend(pagelet, {
         moduleUri: module.uri,
         run: function (display, request, controller, options) {
             var _this = this;
 
-            fs.readFile(path.join(_this.dir, _this.dirName + conf.get('file.extensions.template')), 'utf8', function (err, data) {
+            fileCache.templates.get(_this.fullPath, function (err, template) {
                 if (err) {
                     console.log('Could not read ' + _this.dir + ' pagelet.');
                     display();
                 }
                 else{
-                    var template = Handlebars.compile(data);
+                    // Load the specified menu, or the default 'user' menu.
+                    var menuFile = path.join(conf.get('path.root_dir'), path.dirname(module.uri), options.data ? options.data : 'user');
 
                     requirejs([menuFile], function(menus) {
                         var activeMenus = _.map(menus, function (link) {

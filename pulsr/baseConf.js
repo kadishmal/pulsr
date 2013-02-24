@@ -22,8 +22,9 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                         maxAge: function () {
                             return (isProduction ? conf.get('app.cache.fileCache.stats.maxAgeProduction') : conf.get('app.cache.fileCache.stats.maxAgeDev')) * 60 * 1000;
                         },
-                        // Don't cache file stats in dev environment.
-                        maxAgeDev: 0,
+                        // Don't cache file stats in dev environment. For then set 1 second cache period.
+                        // Setting 0 doesn't work, perhaps async-cache bug or expected behavior.
+                        maxAgeDev: 1/60,
                         // In production cache file stats for 10 minutes.
                         maxAgeProduction: 10
                     },
@@ -35,8 +36,9 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                         maxAge: function () {
                             return (isProduction ? conf.get('app.cache.fileCache.layouts.maxAgeProduction') : conf.get('app.cache.fileCache.layouts.maxAgeDev')) * 60 * 1000;
                         },
-                        // Don't cache file stats in dev environment.
-                        maxAgeDev: 0,
+                        // Don't cache file stats in dev environment. For then set 1 second cache period.
+                        // Setting 0 doesn't work, perhaps async-cache bug or expected behavior.
+                        maxAgeDev: 1/60,
                         // In production cache file stats for 10 minutes.
                         maxAgeProduction: 10
                     }

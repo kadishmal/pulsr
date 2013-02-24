@@ -41,6 +41,20 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                         maxAgeDev: 1/60,
                         // In production cache file stats for 10 minutes.
                         maxAgeProduction: 10
+                    },
+                    templates: {
+                        // Options passed directly to the internal lru cache
+                        // indicating how many items to store in a fileCache.
+                        max: 100,
+                        // maxAge property for lru cache.
+                        maxAge: function () {
+                            return (isProduction ? conf.get('app.cache.fileCache.templates.maxAgeProduction') : conf.get('app.cache.fileCache.templates.maxAgeDev')) * 60 * 1000;
+                        },
+                        // Don't cache file stats in dev environment. For then set 1 second cache period.
+                        // Setting 0 doesn't work, perhaps async-cache bug or expected behavior.
+                        maxAgeDev: 1/60,
+                        // In production cache file stats for 10 minutes.
+                        maxAgeProduction: 10
                     }
                 }
             },

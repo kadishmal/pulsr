@@ -122,6 +122,7 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
             extensions: {
                 // extension of template files
                 template: '.hb',
+                handlebars: '.hb',
                 markdown: '.md',
                 less: '.less',
                 css: '.css',

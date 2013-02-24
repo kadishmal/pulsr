@@ -11,8 +11,8 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                     // or at least a month ahead.
                     // 1 week is acceptable by Google Page Speed as well as YSlow
                     60 * 60 * 24 * 7 :
-                    // or 5 minutes on dev server
-                    300),
+                    // or 0 minutes on dev server
+                    0),
                 fileCache: {
                     stats: {
                         // Options passed directly to the internal lru cache

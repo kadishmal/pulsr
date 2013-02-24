@@ -49,7 +49,7 @@ define(['pagelet', 'underscore', 'path', 'module', 'conf', 'handlebars', 'requir
 
                         display(template({
                             menus: activeMenus,
-                            targetId: options.targetId,
+                            targetId: options.targetId ? options.targetId : _this.dirName,
                             class:  options.class
                         }));
                     });

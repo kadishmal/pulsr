@@ -65,7 +65,7 @@ define(['module', 'path', 'microConf'], function(module, path, conf) {
                 root: function () {
                     var app = conf.get('app');
 
-                    return (isProduction ? app.domains.production : app.domains.dev + ':' + app.port);
+                    return (isProduction ? app.domains.production : app.domains.dev + (parseFloat(app.port) != 80 ? ':' + app.port : ''));
                 },
                 static: function () {
                     return 'static.' + conf.get('app.domains.root');

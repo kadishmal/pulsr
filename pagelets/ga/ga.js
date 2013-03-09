@@ -6,22 +6,29 @@ define(['pagelet', 'underscore', 'fs', 'path', 'module', 'conf', 'fileCache'], f
     return _.extend(pagelet, {
         moduleUri: module.uri,
         run: function (display) {
-            // Get the pagelet layout.
-            fileCache.templates.get(this.fullPath, function (err, template) {
-                var data;
+            var gaCode = conf.get('pagelets.ga.code');
 
-                if (err) {
-                    console.log('Could not read ' + this.dir + ' pagelet.');
-                }
-                else{
-                    data = template({
-                        gaCode: conf.get('pagelets.ga.code'),
-                        domain: conf.get('pagelets.ga.domain')
-                    });
-                }
+            if (gaCode) {
+                // Get the pagelet layout.
+                fileCache.templates.get(this.fullPath, function (err, template) {
+                    var data;
 
-                display(data);
-            });
+                    if (err) {
+                        console.log('Could not read ' + this.dir + ' pagelet.');
+                    }
+                    else{
+                        data = template({
+                            gaCode: gaCode,
+                            domain: conf.get('pagelets.ga.domain')
+                        });
+                    }
+
+                    display(data);
+                });
+            }
+            else{
+                display();
+            }
         }
     });
 });

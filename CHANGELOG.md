@@ -1,5 +1,25 @@
 # Pulsr Web App Framework Change Log
 
+## Version 0.2.1 February 14, 2013
+
+- Enh: allow to custom set maxAge for layouts and stats cache.
+- Enh: implement caching in microConf.
+- Enh: added a Handlebars enabled templates async-cache to fileCache.
+- Enh: added Handlebars extension to the baseConf.
+- Enh: in Dev environment, don't cache static assets by default.
+- Enh: allow to specify which data to load in the navigation pagelet.
+- Enh: default targetId for pagelets can be the name of the pagelet itself.
+- Enh: use the new template async-cache from fileCache in ga pagelet.
+- Fix: After commit b74da1af0d01b3260e222b09c476e64ff199bdf1 JavaScript files are loaded by RequireJS from main www domain. Should load from the same static domain.
+- Fix: a copy paste bug introduced in 62bb24db087970a9995a55cf1a797243db243dc1.
+- Fix: a bug from 7cb0cd1576190a8b4b1b4be73f487a224c84616c which passed a wrong cache key (`key` instead of `chainKey`).
+- Fix: setting 0 for fileCache maxAge doesn't work properly. async-cache module's bug or behavior.
+- Fix: when port is 80, no need to add it to the URL.
+- Test: added microConf tests.
+- Doc: updated docs.
+- Make: add more directories to generate Pulsr docs from.
+- package.json: updated "should" module.
+
 ## Version 0.2.0 February 12, 2013
 
 - New: added a microConf module which will allow users to override default system configurations.
